@@ -61,25 +61,32 @@ export function BacktestingSection() {
     setProgress(10);
     try {
       const yahooSymbol = mapToYahooSymbol(symbol, exchange);
+      console.log('Running backtest with:', { yahooSymbol, start, end, strategyKind, strategyParams });
+      
       const data = await runBacktestApi({
         symbol: yahooSymbol,
         start,
         end,
         strategy: { kind: strategyKind, params: strategyParams }
       });
+      
+      console.log('Backtest response:', data);
       setProgress(80);
+      
       const totalReturn = Math.round((data.metrics?.totalReturnPct ?? (((data.equityCurve?.at(-1) ?? 1) - 1) * 100)) * 10) / 10;
       const sharpeRatio = Math.round((data.metrics?.sharpe ?? 0) * 10) / 10;
       const maxDrawdown = Math.round((data.metrics?.maxDrawdownPct ?? 0) * 10) / 10 * -1;
       const winRate = Math.round((data.metrics?.winRatePct ?? 0));
       const totalTrades = data.metrics?.numTrades ?? 0;
       const profitFactor = Math.round((data.metrics?.profitFactor ?? 0) * 10) / 10;
+      
       setResults({ totalReturn, sharpeRatio, maxDrawdown, winRate, totalTrades, profitFactor });
       setProgress(100);
     } catch (e) {
-      // fallback to mock to keep UI friendly
-      setResults(mockResults);
-      setProgress(100);
+      console.error('Backtest error:', e);
+      alert(`Backtest failed: ${e instanceof Error ? e.message : 'Unknown error'}`);
+      setResults(null);
+      setProgress(0);
     } finally {
       setIsRunning(false);
     }
