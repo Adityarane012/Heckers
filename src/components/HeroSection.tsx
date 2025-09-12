@@ -1,6 +1,5 @@
 import { Button } from "@/components/ui/button";
 import { ArrowRight, TrendingUp, Shield, Users } from "lucide-react";
-import heroImage from "@/assets/hero-trading.jpg";
 
 export function HeroSection() {
   return (
@@ -9,7 +8,7 @@ export function HeroSection() {
       <div 
         className="absolute inset-0 z-0"
         style={{
-          backgroundImage: `linear-gradient(rgba(29, 39, 54, 0.8), rgba(29, 39, 54, 0.9)), url(${heroImage})`,
+          backgroundImage: `linear-gradient(rgba(29, 39, 54, 0.7), rgba(29, 39, 54, 0.85)), url(https://images.unsplash.com/photo-1520975657283-8bfa6a5fdc06?auto=format&fit=crop&w=1920&q=80)`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
         }}
@@ -45,12 +44,15 @@ export function HeroSection() {
 
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16 animate-fade-in">
-            <Button variant="trading" size="lg" className="text-lg px-8 py-4">
-              Start Trading
-              <ArrowRight className="w-5 h-5 ml-2" />
+            <Button asChild variant="trading" size="lg" className="text-lg px-8 py-4">
+              <a href="#strategies">
+                Start Trading
+                <ArrowRight className="w-5 h-5 ml-2" />
+              </a>
             </Button>
             <Button variant="trading-outline" size="lg" className="text-lg px-8 py-4">
-              Watch Demo
+              Learn More
+              <ArrowRight className="w-5 h-5 ml-2" />
             </Button>
           </div>
 

@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, BarChart3 } from "lucide-react";
+import { Link } from "react-router-dom";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -10,36 +11,38 @@ export function Navbar() {
       <div className="container mx-auto px-6">
         <div className="flex items-center justify-between h-16">
           {/* Logo */}
-          <div className="flex items-center space-x-2">
+          <Link to="/" className="flex items-center space-x-2">
             <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center">
               <BarChart3 className="w-5 h-5 text-primary-foreground" />
             </div>
-            <span className="text-xl font-bold">AlgoTrade</span>
-          </div>
+            <span className="text-xl font-bold">OpenAlgo</span>
+          </Link>
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <a href="#features" className="text-foreground hover:text-primary transition-colors">
+            <Link to="/#features" className="text-foreground hover:text-primary transition-colors">
               Features
-            </a>
-            <a href="#strategies" className="text-foreground hover:text-primary transition-colors">
+            </Link>
+            <Link to="/#strategies" className="text-foreground hover:text-primary transition-colors">
               Strategies
-            </a>
-            <a href="#backtesting" className="text-foreground hover:text-primary transition-colors">
+            </Link>
+            <Link to="/#backtesting" className="text-foreground hover:text-primary transition-colors">
               Backtesting
-            </a>
-            <a href="#community" className="text-foreground hover:text-primary transition-colors">
+            </Link>
+            <Link to="/#community" className="text-foreground hover:text-primary transition-colors">
               Community
-            </a>
-            <a href="#pricing" className="text-foreground hover:text-primary transition-colors">
+            </Link>
+            <Link to="/pricing" className="text-foreground hover:text-primary transition-colors">
               Pricing
-            </a>
+            </Link>
           </div>
 
           {/* Desktop CTA */}
           <div className="hidden md:flex items-center space-x-4">
             <Button variant="ghost">Sign In</Button>
-            <Button variant="trading">Get Started</Button>
+            <Link to="/#strategies" className="inline-flex">
+              <Button variant="trading">Get Started</Button>
+            </Link>
           </div>
 
           {/* Mobile menu button */}
@@ -58,24 +61,26 @@ export function Navbar() {
         {isOpen && (
           <div className="md:hidden py-4 border-t border-border animate-fade-in">
             <div className="flex flex-col space-y-4">
-              <a href="#features" className="text-foreground hover:text-primary transition-colors">
+              <Link to="/#features" className="text-foreground hover:text-primary transition-colors" onClick={() => setIsOpen(false)}>
                 Features
-              </a>
-              <a href="#strategies" className="text-foreground hover:text-primary transition-colors">
+              </Link>
+              <Link to="/#strategies" className="text-foreground hover:text-primary transition-colors" onClick={() => setIsOpen(false)}>
                 Strategies
-              </a>
-              <a href="#backtesting" className="text-foreground hover:text-primary transition-colors">
+              </Link>
+              <Link to="/#backtesting" className="text-foreground hover:text-primary transition-colors" onClick={() => setIsOpen(false)}>
                 Backtesting
-              </a>
-              <a href="#community" className="text-foreground hover:text-primary transition-colors">
+              </Link>
+              <Link to="/#community" className="text-foreground hover:text-primary transition-colors" onClick={() => setIsOpen(false)}>
                 Community
-              </a>
-              <a href="#pricing" className="text-foreground hover:text-primary transition-colors">
+              </Link>
+              <Link to="/pricing" className="text-foreground hover:text-primary transition-colors" onClick={() => setIsOpen(false)}>
                 Pricing
-              </a>
+              </Link>
               <div className="pt-4 border-t border-border flex flex-col space-y-2">
                 <Button variant="ghost" className="justify-start">Sign In</Button>
-                <Button variant="trading" className="justify-start">Get Started</Button>
+                <Link to="/#strategies" onClick={() => setIsOpen(false)} className="inline-flex">
+                  <Button variant="trading" className="justify-start">Get Started</Button>
+                </Link>
               </div>
             </div>
           </div>
