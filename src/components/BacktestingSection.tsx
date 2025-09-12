@@ -4,6 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { Input } from "@/components/ui/input";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { 
   BarChart, 
   TrendingUp, 
@@ -38,17 +40,32 @@ export function BacktestingSection() {
   const [isRunning, setIsRunning] = useState(false);
   const [progress, setProgress] = useState(0);
   const [results, setResults] = useState<BacktestResults | null>(null);
+  const [symbol, setSymbol] = useState("AAPL");
+  const [exchange, setExchange] = useState<"USA" | "NSE" | "BSE">("USA");
+  const [start, setStart] = useState("2020-01-01");
+  const [end, setEnd] = useState("2024-01-01");
+  const [initialCapital, setInitialCapital] = useState<number>(10000);
+  const [strategyKind, setStrategyKind] = useState<'smaCross' | 'rsiReversion' | 'macd' | 'breakout' | 'momentum'>("smaCross");
+  const [strategyParams, setStrategyParams] = useState<Record<string, number>>({ fast: 10, slow: 30, period: 14, buyLevel: 30, sellLevel: 70, signal: 9, lookback: 20 });
+
+  function mapToYahooSymbol(input: string, ex: "USA" | "NSE" | "BSE") {
+    const clean = input.trim().toUpperCase();
+    if (ex === "NSE") return `${clean}.NS`;
+    if (ex === "BSE") return `${clean}.BO`;
+    return clean; // USA (NASDAQ/NYSE)
+  }
 
   const runBacktest = async () => {
     setIsRunning(true);
     setResults(null);
     setProgress(10);
     try {
+      const yahooSymbol = mapToYahooSymbol(symbol, exchange);
       const data = await runBacktestApi({
-        symbol: "AAPL",
-        start: "2020-01-01",
-        end: "2024-01-01",
-        strategy: { kind: "smaCross", params: { fast: 10, slow: 30 } }
+        symbol: yahooSymbol,
+        start,
+        end,
+        strategy: { kind: strategyKind, params: strategyParams }
       });
       setProgress(80);
       const totalReturn = Math.round((data.metrics?.totalReturnPct ?? (((data.equityCurve?.at(-1) ?? 1) - 1) * 100)) * 10) / 10;
@@ -92,33 +109,122 @@ export function BacktestingSection() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-3 gap-4">
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">Start Date</label>
-                    <div className="p-3 border border-border rounded-lg bg-muted">
-                      2022-01-01
-                    </div>
+                    <label className="text-sm font-medium">Exchange</label>
+                    <Select value={exchange} onValueChange={(v) => setExchange(v as any)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select exchange" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="USA">USA (NASDAQ/NYSE)</SelectItem>
+                        <SelectItem value="NSE">NSE (India)</SelectItem>
+                        <SelectItem value="BSE">BSE (India)</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
                   <div className="space-y-2">
-                    <label className="text-sm font-medium">End Date</label>
-                    <div className="p-3 border border-border rounded-lg bg-muted">
-                      2024-01-01
-                    </div>
+                    <label className="text-sm font-medium">Symbol</label>
+                    <Input placeholder="e.g. AAPL / TCS / RELIANCE" value={symbol} onChange={(e) => setSymbol(e.target.value)} />
                   </div>
-                </div>
-                
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Initial Capital</label>
-                  <div className="p-3 border border-border rounded-lg bg-muted">
-                    $10,000
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Initial Capital (USD)</label>
+                    <Input type="number" min={100} step={100} value={initialCapital} onChange={(e) => setInitialCapital(Number(e.target.value))} />
                   </div>
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-sm font-medium">Symbol</label>
-                  <div className="p-3 border border-border rounded-lg bg-muted">
-                    SPY (S&P 500 ETF)
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Start Date</label>
+                    <Input type="date" value={start} onChange={(e) => setStart(e.target.value)} />
                   </div>
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">End Date</label>
+                    <Input type="date" value={end} onChange={(e) => setEnd(e.target.value)} />
+                  </div>
+                </div>
+
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="space-y-2">
+                    <label className="text-sm font-medium">Strategy</label>
+                    <Select value={strategyKind} onValueChange={(v) => setStrategyKind(v as any)}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select strategy" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="smaCross">SMA Crossover</SelectItem>
+                        <SelectItem value="rsiReversion">RSI Reversion</SelectItem>
+                        <SelectItem value="macd">MACD</SelectItem>
+                        <SelectItem value="breakout">Breakout</SelectItem>
+                        <SelectItem value="momentum">Momentum (ROC)</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+
+                  {strategyKind === 'smaCross' && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Fast</label>
+                      <Input type="number" value={strategyParams.fast ?? 10} onChange={(e) => setStrategyParams(p => ({ ...p, fast: Number(e.target.value) }))} />
+                    </div>
+                  )}
+                  {strategyKind === 'smaCross' && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Slow</label>
+                      <Input type="number" value={strategyParams.slow ?? 30} onChange={(e) => setStrategyParams(p => ({ ...p, slow: Number(e.target.value) }))} />
+                    </div>
+                  )}
+
+                  {strategyKind === 'rsiReversion' && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Period</label>
+                      <Input type="number" value={strategyParams.period ?? 14} onChange={(e) => setStrategyParams(p => ({ ...p, period: Number(e.target.value) }))} />
+                    </div>
+                  )}
+                  {strategyKind === 'rsiReversion' && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Buy Level</label>
+                      <Input type="number" value={strategyParams.buyLevel ?? 30} onChange={(e) => setStrategyParams(p => ({ ...p, buyLevel: Number(e.target.value) }))} />
+                    </div>
+                  )}
+                  {strategyKind === 'rsiReversion' && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Sell Level</label>
+                      <Input type="number" value={strategyParams.sellLevel ?? 70} onChange={(e) => setStrategyParams(p => ({ ...p, sellLevel: Number(e.target.value) }))} />
+                    </div>
+                  )}
+
+                  {strategyKind === 'macd' && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Fast</label>
+                      <Input type="number" value={strategyParams.fast ?? 12} onChange={(e) => setStrategyParams(p => ({ ...p, fast: Number(e.target.value) }))} />
+                    </div>
+                  )}
+                  {strategyKind === 'macd' && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Slow</label>
+                      <Input type="number" value={strategyParams.slow ?? 26} onChange={(e) => setStrategyParams(p => ({ ...p, slow: Number(e.target.value) }))} />
+                    </div>
+                  )}
+                  {strategyKind === 'macd' && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Signal</label>
+                      <Input type="number" value={strategyParams.signal ?? 9} onChange={(e) => setStrategyParams(p => ({ ...p, signal: Number(e.target.value) }))} />
+                    </div>
+                  )}
+
+                  {strategyKind === 'breakout' && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Lookback</label>
+                      <Input type="number" value={strategyParams.lookback ?? 20} onChange={(e) => setStrategyParams(p => ({ ...p, lookback: Number(e.target.value) }))} />
+                    </div>
+                  )}
+
+                  {strategyKind === 'momentum' && (
+                    <div className="space-y-2">
+                      <label className="text-sm font-medium">Period</label>
+                      <Input type="number" value={strategyParams.period ?? 63} onChange={(e) => setStrategyParams(p => ({ ...p, period: Number(e.target.value) }))} />
+                    </div>
+                  )}
                 </div>
               </div>
 
@@ -166,6 +272,14 @@ export function BacktestingSection() {
               </div>
             </CardHeader>
             <CardContent>
+              <div className="mb-4 text-sm text-muted-foreground">
+                <div>
+                  <span className="font-medium">Run:</span> {mapToYahooSymbol(symbol, exchange)} ({exchange}) from {start} to {end} with initial capital ${initialCapital.toLocaleString()}
+                </div>
+                <div>
+                  <span className="font-medium">Strategy:</span> {strategyKind}
+                </div>
+              </div>
               {!results ? (
                 <div className="flex flex-col items-center justify-center h-64 text-center">
                   <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
