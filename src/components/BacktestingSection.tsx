@@ -61,19 +61,12 @@ export function BacktestingSection() {
     setProgress(10);
     try {
       const yahooSymbol = mapToYahooSymbol(symbol, exchange);
-      console.log('Backtest request:', {
-        symbol: yahooSymbol,
-        start,
-        end,
-        strategy: { kind: strategyKind, params: strategyParams }
-      });
       const data = await runBacktestApi({
         symbol: yahooSymbol,
         start,
         end,
         strategy: { kind: strategyKind, params: strategyParams }
       });
-      console.log('Backtest response:', data);
       setProgress(80);
       const totalReturn = Math.round((data.metrics?.totalReturnPct ?? (((data.equityCurve?.at(-1) ?? 1) - 1) * 100)) * 10) / 10;
       const sharpeRatio = Math.round((data.metrics?.sharpe ?? 0) * 10) / 10;
