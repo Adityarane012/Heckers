@@ -3,7 +3,7 @@ import { ArrowRight, TrendingUp, Shield, Users } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-20">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-16 px-4">
       {/* Background */}
       <div 
         className="absolute inset-0 z-0"
@@ -21,7 +21,7 @@ export function HeroSection() {
       </div>
 
       <div className="relative z-10 container mx-auto px-6 text-center">
-        <div className="max-w-4xl mx-auto">
+        <div className="max-w-5xl mx-auto">
           {/* Badge */}
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/20 border border-primary/30 mb-8 animate-fade-in">
             <TrendingUp className="w-4 h-4 mr-2 text-primary" />
@@ -29,11 +29,12 @@ export function HeroSection() {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-relaxed animate-fade-in">
-            Trade Smarter with
-            <span className="block bg-gradient-primary bg-clip-text text-transparent">
-              AI-Powered <span className="text-4xl md:text-5xl">Algorithms</span>
-            </span>
+          <h1 className="text-4xl md:text-6xl font-bold mb-12 leading-normal animate-fade-in">
+            <div className="mb-4">Trade Smarter with</div>
+            <div className="bg-gradient-primary bg-clip-text text-transparent">
+              <div className="text-5xl md:text-7xl">AI-Powered</div>
+              <div className="text-3xl md:text-5xl mt-2">Algorithms</div>
+            </div>
           </h1>
 
           {/* Subtitle */}
