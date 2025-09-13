@@ -1,266 +1,177 @@
-# Hybrid Price Predictor API
+# Price Predictor API
 
-A modern FastAPI-based service for predicting next hour stock price movements using machine learning. Supports both manual OHLCV input and automatic stock symbol fetching with yfinance.
+A FastAPI-based service for predicting next hour stock price movements using machine learning.
 
-## 🚀 Features
+## Features
 
-- **Hybrid Input Support**: Manual OHLCV data or automatic symbol-based fetching
-- **Multi-Market Support**: NSE, BSE, NYSE, NASDAQ with proper symbol formatting
-- **Real-time Data**: Automatic fetching of latest stock data using yfinance
-- **Machine Learning**: RandomForestClassifier with 15 engineered features
-- **Comprehensive Error Handling**: Graceful handling of invalid symbols, closed markets, and API failures
-- **Timezone Support**: Configurable timezone handling for different markets
-- **Feature Engineering**: Advanced technical indicators and price analysis
-- **Model Retraining**: On-demand model retraining with fresh data
+- **REST API** with FastAPI framework
+- **Machine Learning Model** using RandomForestClassifier
+- **Data Validation** with Pydantic models
+- **Error Handling** with graceful fallbacks
+- **CORS Support** for frontend integration
+- **Auto Model Creation** with demo data if no model exists
 
-## 📋 Requirements
+## Setup
+
+### Prerequisites
 
 - Python 3.8+
-- FastAPI
-- scikit-learn
-- pandas
-- yfinance
-- uvicorn
+- pip
 
-## 🛠️ Installation
+### Installation
 
-1. **Clone the repository**:
-   ```bash
-   git clone <your-repo-url>
-   cd AlgoCode/predictor-backend
-   ```
-
-2. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-3. **Start the server**:
-   ```bash
-   uvicorn main:app --host 0.0.0.0 --port 8001 --reload
-   ```
-
-## 📡 API Endpoints
-
-### Health Check
+1. Navigate to the predictor-backend directory:
 ```bash
-GET /health
+cd predictor-backend
 ```
 
-**Response**:
+2. Create a virtual environment (recommended):
+```bash
+python -m venv venv
+source venv/bin/activate  # On Windows: venv\Scripts\activate
+```
+
+3. Install dependencies:
+```bash
+pip install -r requirements.txt
+```
+
+### Running the API
+
+```bash
+# Development server
+uvicorn main:app --reload --host 0.0.0.0 --port 8000
+
+# Or run directly
+python main.py
+```
+
+The API will be available at:
+- **API**: http://localhost:8000
+- **Interactive Docs**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+
+## API Endpoints
+
+### GET /
+Root endpoint with API information.
+
+### GET /health
+Health check endpoint.
+
+### POST /predict
+Predict next hour price movement.
+
+**Request Body:**
 ```json
 {
-  "status": "healthy",
-  "model_loaded": true,
-  "timestamp": "2025-01-13T11:34:24.694612"
-}
-```
-
-### Predict Price Movement
-```bash
-POST /predict
-```
-
-#### Manual OHLCV Input
-```json
-{
-  "ohlcv_data": {
+  "data": {
     "open": 100.0,
     "high": 105.0,
     "low": 98.0,
     "close": 103.0,
-    "volume": 1000000
+    "volume": 10000
   }
 }
 ```
 
-#### Symbol-based Input
-```json
-{
-  "symbol": "AAPL",
-  "timezone": "America/New_York",
-  "market": "NASDAQ"
-}
-```
-
-**Response**:
+**Response:**
 ```json
 {
   "prediction": 1,
-  "probability": 0.98,
+  "probability": 0.75,
   "confidence": "High",
-  "features_used": {
-    "open": 100.0,
-    "high": 105.0,
-    "low": 98.0,
-    "close": 103.0,
-    "volume": 1000000.0,
-    "price_range": 7.0,
-    "body_size": 3.0,
-    "upper_shadow": 2.0,
-    "lower_shadow": 2.0,
-    "body_ratio": 0.4286,
-    "upper_shadow_ratio": 0.2857,
-    "lower_shadow_ratio": 0.2857,
-    "volume_ratio": 1061.3,
-    "price_change": 0.03,
-    "rsi_approx": 80.0
-  },
-  "data_source": "manual",
-  "symbol": null,
   "error": null
 }
 ```
 
-### Retrain Model
+### POST /retrain
+Retrain the model with fresh demo data.
+
+## Sample cURL Commands
+
+### Single Prediction
 ```bash
-POST /retrain
-```
-
-**Response**:
-```json
-{
-  "message": "Model retrained successfully",
-  "timestamp": "2025-01-13T11:34:24.694612",
-  "model_loaded": true
-}
-```
-
-## 🎯 Supported Stock Symbols
-
-### US Markets
-- **NYSE**: AAPL, MSFT, GOOGL, AMZN, TSLA
-- **NASDAQ**: AAPL, MSFT, GOOGL, AMZN, TSLA
-
-### Indian Markets
-- **NSE**: RELIANCE.NS, TCS.NS, INFY.NS, HDFC.NS, WIPRO.NS
-- **BSE**: RELIANCE.BO, TCS.BO, INFY.BO, HDFC.BO, WIPRO.BO
-
-### Timezone Support
-- `UTC` - Universal Coordinated Time
-- `America/New_York` - NYSE/NASDAQ
-- `America/Los_Angeles` - West Coast markets
-- `Asia/Kolkata` - NSE/BSE
-- `Europe/London` - LSE
-
-## 🧠 Machine Learning Model
-
-### Features Used (15 total)
-1. **Basic OHLCV**: Open, High, Low, Close, Volume
-2. **Price Analysis**: Price range, body size, shadows
-3. **Technical Ratios**: Body ratio, shadow ratios
-4. **Volume Analysis**: Volume-to-price ratio
-5. **Momentum**: Price change percentage
-6. **Technical Indicators**: Simplified RSI approximation
-
-### Model Details
-- **Algorithm**: RandomForestClassifier
-- **Estimators**: 100 trees
-- **Max Depth**: 10
-- **Min Samples Split**: 5
-- **Features**: 15 engineered features
-- **Training Data**: 1000 synthetic samples (demo mode)
-
-## 🔧 Configuration
-
-### Environment Variables
-```bash
-# Optional: For enhanced data sources
-ALPHA_VANTAGE_API_KEY=your_key_here
-POLYGON_API_KEY=your_key_here
-```
-
-### Model Files
-- `price_predictor_model.pkl` - Trained RandomForest model
-- `price_scaler.pkl` - Feature scaler for normalization
-
-## 🚨 Error Handling
-
-The API provides comprehensive error handling for:
-
-- **Invalid Symbols**: Non-existent or delisted stocks
-- **Market Closed**: When markets are not trading
-- **Network Issues**: API connectivity problems
-- **Data Validation**: Invalid OHLCV values
-- **Model Errors**: ML prediction failures
-
-### Common Error Responses
-```json
-{
-  "detail": "No data found for symbol 'INVALID'. Please check if the symbol is correct and the market is open."
-}
-```
-
-## 🧪 Testing
-
-### Manual OHLCV Test
-```bash
-curl -X POST "http://localhost:8001/predict" \
+curl -X POST "http://localhost:8000/predict" \
   -H "Content-Type: application/json" \
   -d '{
-    "ohlcv_data": {
-      "open": 100,
-      "high": 105,
-      "low": 98,
-      "close": 103,
-      "volume": 1000000
+    "data": {
+      "open": 100.0,
+      "high": 105.0,
+      "low": 98.0,
+      "close": 103.0,
+      "volume": 10000
     }
   }'
 ```
 
-### Symbol-based Test
+### Batch Prediction
 ```bash
-curl -X POST "http://localhost:8001/predict" \
+curl -X POST "http://localhost:8000/predict" \
   -H "Content-Type: application/json" \
   -d '{
-    "symbol": "AAPL",
-    "timezone": "America/New_York"
+    "data": [
+      {
+        "open": 100.0,
+        "high": 105.0,
+        "low": 98.0,
+        "close": 103.0,
+        "volume": 10000
+      },
+      {
+        "open": 103.0,
+        "high": 108.0,
+        "low": 101.0,
+        "close": 106.0,
+        "volume": 12000
+      }
+    ]
   }'
 ```
 
-## 🔄 Development
+### Health Check
+```bash
+curl -X GET "http://localhost:8000/health"
+```
+
+### Retrain Model
+```bash
+curl -X POST "http://localhost:8000/retrain"
+```
+
+## Model Details
+
+The model uses a RandomForestClassifier with the following features:
+- Basic OHLCV data (Open, High, Low, Close, Volume)
+- Price range and body size
+- Shadow ratios (upper/lower)
+- Volume ratios
+- Price momentum
+- Simplified RSI approximation
+
+## Error Handling
+
+The API handles various error scenarios:
+- Invalid OHLCV data (high < low, inconsistent values)
+- Model loading failures
+- Prediction errors
+- Network issues
+
+All errors return appropriate HTTP status codes and error messages.
+
+## Development
 
 ### Adding New Features
-1. Update the `create_features()` function for new technical indicators
-2. Modify the `HybridPredictionRequest` model for new input parameters
-3. Update the `fetch_stock_data()` function for additional data sources
 
-### Model Improvements
-1. Replace synthetic data with real market data
-2. Add more sophisticated technical indicators
-3. Implement ensemble methods or deep learning models
-4. Add feature selection and hyperparameter tuning
+1. Update the Pydantic models in `main.py`
+2. Modify the `create_features()` function for new features
+3. Update the model training in `create_demo_model()`
+4. Test with the interactive docs at `/docs`
 
-## 📊 Performance
+### Model Persistence
 
-- **Response Time**: < 200ms for predictions
-- **Data Fetching**: < 1s for symbol-based requests
-- **Model Accuracy**: Demo model with 98% confidence on test data
-- **Concurrent Requests**: Supports multiple simultaneous predictions
+The model and scaler are automatically saved as:
+- `price_predictor_model.pkl`
+- `price_scaler.pkl`
 
-## 🛡️ Security
-
-- CORS enabled for frontend integration
-- Input validation and sanitization
-- Error message sanitization
-- No sensitive data exposure in logs
-
-## 📝 License
-
-This project is part of the AlgoCode trading platform.
-
-## 🤝 Contributing
-
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests
-5. Submit a pull request
-
-## 📞 Support
-
-For issues and questions:
-- Check the error messages for debugging
-- Verify symbol formats and market hours
-- Ensure all dependencies are installed
-- Check network connectivity for yfinance
+These files are created on first run and reused on subsequent starts.

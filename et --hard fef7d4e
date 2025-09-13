@@ -1,0 +1,5 @@
+[33mea28ae2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m feat: implement hybrid price predictor with dual-tab UI and yfinance integration
+[33m808c53c[m feat: add full-stack Next Hour Price Predictor with Python FastAPI backend and React frontend
+[33mfef7d4e[m feat: add stock price chart to backtest results showing price movement over user-specified date range
+[33m28c9ccd[m fix: completely redo hero text layout with separate divs and proper spacing to ensure all text is visible
+[33me4011ce[m fix: improve text visibility by adjusting line height, spacing, and container padding to prevent text cutoff

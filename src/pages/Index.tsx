@@ -2,7 +2,7 @@ import { Navbar } from "@/components/Navbar";
 import { HeroSection } from "@/components/HeroSection";
 import { StrategyBuilder } from "@/components/StrategyBuilder";
 import { BacktestingSection } from "@/components/BacktestingSection";
-import HybridPricePredictor from "@/components/HybridPricePredictor";
+import { PricePredictor } from "@/components/PricePredictor";
 import { CommunitySection } from "@/components/CommunitySection";
 import { EducationalHelp } from "@/components/EducationalHelp";
 import { PaperTradingPanel } from "@/components/PaperTradingPanel";
@@ -14,7 +14,7 @@ const Index = () => {
       <HeroSection />
       <StrategyBuilder />
       <BacktestingSection />
-      <HybridPricePredictor />
+      <PricePredictor />
       <EducationalHelp />
       <PaperTradingPanel />
       <CommunitySection />

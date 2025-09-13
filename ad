@@ -1,0 +1,17 @@
+[33mea28ae2[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mmain[m[33m, [m[1;31morigin/main[m[33m, [m[1;31morigin/HEAD[m[33m)[m feat: implement hybrid price predictor with dual-tab UI and yfinance integration
+[33m808c53c[m feat: add full-stack Next Hour Price Predictor with Python FastAPI backend and React frontend
+[33mfef7d4e[m feat: add stock price chart to backtest results showing price movement over user-specified date range
+[33m28c9ccd[m fix: completely redo hero text layout with separate divs and proper spacing to ensure all text is visible
+[33me4011ce[m fix: improve text visibility by adjusting line height, spacing, and container padding to prevent text cutoff
+[33mcf98c0f[m fix: make 'Algorithms' text smaller for better readability in hero section
+[33m01cb682[m feat: complete data source fallback system with multiple providers and mock data generation
+[33m7585dfb[m docs: add README for data sources and API key setup
+[33m457fc2c[m feat: add multiple data sources with fallback system - Yahoo, Alpha Vantage, Polygon, and mock data
+[33m4bb4140[m debug: add error handling and logging to backtest function
+[33m31d1801[m cleanup: remove debugging console.log statements
+[33md11c0ef[m fix: improve Yahoo Finance API compatibility with multiple endpoints and JSON parsing
+[33m797a791[m fix: remove symbol.toUpperCase() for NSE/BSE symbols; add debugging logs
+[33m9c26a7d[m feat(backtest): user inputs for symbol/exchange/dates/capital + strategy selector; wire to API with Yahoo suffix mapping; show run summary
+[33md096bee[m chore: commit latest changes
+[33mcad4b5e[m Implement Algorithmic Trading Platform
+[33mf9e9d8f[m [skip lovable] Use tech stack vite_react_shadcn_ts_20250728_minor
