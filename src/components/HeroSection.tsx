@@ -32,7 +32,7 @@ export function HeroSection() {
           <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight animate-fade-in">
             Trade Smarter with
             <span className="block bg-gradient-primary bg-clip-text text-transparent">
-              AI-Powered Algorithms
+              AI-Powered <span className="text-4xl md:text-5xl">Algorithms</span>
             </span>
           </h1>
 
