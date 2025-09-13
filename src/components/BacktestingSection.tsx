@@ -15,8 +15,10 @@ import {
   Target,
   Shield,
   Play,
-  Download
+  Download,
+  LineChart
 } from "lucide-react";
+import { LineChart as RechartsLineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 
 interface BacktestResults {
   totalReturn: number;
@@ -25,6 +27,12 @@ interface BacktestResults {
   winRate: number;
   totalTrades: number;
   profitFactor: number;
+  stockData?: Array<{
+    date: string;
+    price: number;
+    timestamp: number;
+  }>;
+  symbol?: string;
 }
 
 const mockResults: BacktestResults = {
@@ -80,7 +88,23 @@ export function BacktestingSection() {
       const totalTrades = data.metrics?.numTrades ?? 0;
       const profitFactor = Math.round((data.metrics?.profitFactor ?? 0) * 10) / 10;
       
-      setResults({ totalReturn, sharpeRatio, maxDrawdown, winRate, totalTrades, profitFactor });
+      // Process stock data for chart
+      const stockData = data.rawData ? data.rawData.map((item: any) => ({
+        date: new Date(item.timestamp).toLocaleDateString(),
+        price: item.close,
+        timestamp: item.timestamp
+      })) : [];
+      
+      setResults({ 
+        totalReturn, 
+        sharpeRatio, 
+        maxDrawdown, 
+        winRate, 
+        totalTrades, 
+        profitFactor,
+        stockData,
+        symbol: yahooSymbol
+      });
       setProgress(100);
     } catch (e) {
       console.error('Backtest error:', e);
@@ -369,6 +393,49 @@ export function BacktestingSection() {
                       The Sharpe ratio of {results.sharpeRatio} indicates {results.sharpeRatio > 1.5 ? "good" : "average"} risk-adjusted returns.
                     </p>
                   </div>
+
+                  {/* Stock Price Chart */}
+                  {results.stockData && results.stockData.length > 0 && (
+                    <div className="p-4 rounded-lg bg-muted/30 border border-border">
+                      <h4 className="font-semibold mb-4 flex items-center gap-2">
+                        <LineChart className="w-4 h-4" />
+                        {results.symbol} Stock Price ({start} to {end})
+                      </h4>
+                      <div className="h-64 w-full">
+                        <ResponsiveContainer width="100%" height="100%">
+                          <RechartsLineChart data={results.stockData}>
+                            <CartesianGrid strokeDasharray="3 3" className="opacity-30" />
+                            <XAxis 
+                              dataKey="date" 
+                              tick={{ fontSize: 12 }}
+                              tickFormatter={(value) => new Date(value).toLocaleDateString('en-US', { month: 'short', day: 'numeric' })}
+                            />
+                            <YAxis 
+                              tick={{ fontSize: 12 }}
+                              tickFormatter={(value) => `$${value.toFixed(2)}`}
+                            />
+                            <Tooltip 
+                              labelFormatter={(value) => new Date(value).toLocaleDateString()}
+                              formatter={(value: number) => [`$${value.toFixed(2)}`, 'Price']}
+                              contentStyle={{ 
+                                backgroundColor: 'hsl(var(--card))', 
+                                border: '1px solid hsl(var(--border))',
+                                borderRadius: '6px'
+                              }}
+                            />
+                            <Line 
+                              type="monotone" 
+                              dataKey="price" 
+                              stroke="hsl(var(--primary))" 
+                              strokeWidth={2}
+                              dot={false}
+                              activeDot={{ r: 4, fill: 'hsl(var(--primary))' }}
+                            />
+                          </RechartsLineChart>
+                        </ResponsiveContainer>
+                      </div>
+                    </div>
+                  )}
                 </div>
               )}
             </CardContent>

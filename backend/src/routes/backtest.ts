@@ -30,7 +30,7 @@ backtestRouter.post('/', async (req, res) => {
 
     const data = await fetchYahooDaily(symbol, start, end);
     const result = runBacktest(data, strategy as StrategyDefinition);
-    res.json({ symbol, ...result });
+    res.json({ symbol, ...result, rawData: data });
   } catch (e: any) {
     console.error('Backtest error:', e);
     res.status(500).json({ error: e.message || 'failed' });

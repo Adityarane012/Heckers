@@ -32,8 +32,7 @@ export function HeroSection() {
           <h1 className="text-4xl md:text-6xl font-bold mb-12 leading-normal animate-fade-in">
             <div className="mb-4">Trade Smarter with</div>
             <div className="bg-gradient-primary bg-clip-text text-transparent">
-              <div className="text-5xl md:text-7xl">AI-Powered</div>
-              <div className="text-3xl md:text-5xl mt-2">Algorithms</div>
+              <div className="text-5xl md:text-3xl">AI-Powered Algorithms</div>
             </div>
           </h1>
 
