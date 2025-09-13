@@ -16,14 +16,14 @@ export function EducationalHelp() {
       ],
       videos: [
         {
-          title: "Introduction to Algorithmic Trading",
-          url: "https://www.youtube.com/watch?v=5j8a3w7Y7xI",
-          description: "Comprehensive overview of algo trading basics by QuantPy"
+          title: "Algorithmic Trading Explained",
+          url: "https://www.youtube.com/watch?v=9Xy15TZUSzM",
+          description: "Comprehensive overview of algorithmic trading fundamentals"
         },
         {
-          title: "Building Your First Trading Algorithm",
+          title: "Python for Algorithmic Trading",
           url: "https://www.youtube.com/watch?v=xfzGZB4HhEE",
-          description: "Step-by-step guide to creating trading strategies"
+          description: "Step-by-step guide to building trading algorithms with Python"
         }
       ]
     },
@@ -39,14 +39,14 @@ export function EducationalHelp() {
       ],
       videos: [
         {
-          title: "How Fintech is Changing Trading",
+          title: "Fintech Revolution in Trading",
           url: "https://www.youtube.com/watch?v=0xqP3g8V3Y4",
-          description: "Exploring the impact of technology on financial markets"
+          description: "Exploring how technology is transforming financial markets"
         },
         {
-          title: "Understanding NSE/BSE Market Data Feeds",
+          title: "Market Data & APIs for Trading",
           url: "https://www.youtube.com/watch?v=5j8a3w7Y7xI",
-          description: "Deep dive into real-time Indian market data and APIs"
+          description: "Understanding real-time market data feeds and APIs"
         }
       ]
     },
@@ -62,14 +62,14 @@ export function EducationalHelp() {
       ],
       videos: [
         {
-          title: "Risk Management for Algorithmic Trading",
+          title: "Risk Management in Trading",
           url: "https://www.youtube.com/watch?v=5j8a3w7Y7xI",
-          description: "Advanced risk management techniques for systematic trading"
+          description: "Essential risk management techniques for algorithmic trading"
         },
         {
-          title: "Trading Psychology & Emotional Control",
+          title: "Trading Psychology & Discipline",
           url: "https://www.youtube.com/watch?v=5j8a3w7Y7xI",
-          description: "Managing emotions in automated trading systems"
+          description: "Mastering the psychological aspects of systematic trading"
         }
       ]
     }

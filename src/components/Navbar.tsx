@@ -1,12 +1,38 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Menu, X, BarChart3, ChevronDown } from "lucide-react";
-import { Link } from "react-router-dom";
+import { Link, useLocation } from "react-router-dom";
 import { FeaturesShowcase } from "./FeaturesShowcase";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
   const [showFeatures, setShowFeatures] = useState(false);
+  const [activeTab, setActiveTab] = useState("home");
+  const location = useLocation();
+
+
+  // Update active tab based on current location
+  useEffect(() => {
+    const path = location.pathname;
+    const hash = location.hash;
+    
+    let newTab = "home";
+    if (path === "/pricing") {
+      newTab = "pricing";
+    } else if (hash === "#strategies") {
+      newTab = "strategies";
+    } else if (hash === "#backtesting") {
+      newTab = "backtesting";
+    } else if (hash === "#community") {
+      newTab = "community";
+    }
+    
+    setActiveTab(newTab);
+  }, [location]);
+
+  const handleTabClick = (tab: string) => {
+    setActiveTab(tab);
+  };
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -20,27 +46,67 @@ export function Navbar() {
             <span className="text-xl font-bold">OpenAlgo</span>
           </Link>
 
-          {/* Desktop Navigation */}
-          <div className="hidden md:flex items-center space-x-8">
+                  {/* Desktop Navigation */}
+                  <div className="hidden md:flex items-center space-x-8">
             <button 
-              onClick={() => setShowFeatures(true)}
-              className="flex items-center gap-1 text-foreground hover:text-primary transition-colors group"
+              onClick={() => {
+                setShowFeatures(true);
+                handleTabClick("features");
+              }}
+              className={`flex items-center gap-1 transition-colors group relative py-2 px-1 ${
+                activeTab === "features" 
+                  ? "text-primary" 
+                  : "text-foreground hover:text-primary"
+              }`}
             >
               Features
               <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-200" />
             </button>
-            <Link to="/#strategies" className="text-foreground hover:text-primary transition-colors">
+            <Link 
+              to="/#strategies" 
+              onClick={() => handleTabClick("strategies")}
+              className={`transition-colors relative py-2 px-1 ${
+                activeTab === "strategies" 
+                  ? "text-primary" 
+                  : "text-foreground hover:text-primary"
+              }`}
+            >
               Strategies
             </Link>
-            <Link to="/#backtesting" className="text-foreground hover:text-primary transition-colors">
+            <Link 
+              to="/#backtesting" 
+              onClick={() => handleTabClick("backtesting")}
+              className={`transition-colors relative py-2 px-1 ${
+                activeTab === "backtesting" 
+                  ? "text-primary" 
+                  : "text-foreground hover:text-primary"
+              }`}
+            >
               Backtesting
             </Link>
-            <Link to="/#community" className="text-foreground hover:text-primary transition-colors">
+            <Link 
+              to="/#community" 
+              onClick={() => handleTabClick("community")}
+              className={`transition-colors relative py-2 px-1 ${
+                activeTab === "community" 
+                  ? "text-primary" 
+                  : "text-foreground hover:text-primary"
+              }`}
+            >
               Community
             </Link>
-            <Link to="/pricing" className="text-foreground hover:text-primary transition-colors">
+            <Link 
+              to="/pricing" 
+              onClick={() => handleTabClick("pricing")}
+              className={`transition-colors relative py-2 px-1 ${
+                activeTab === "pricing" 
+                  ? "text-primary" 
+                  : "text-foreground hover:text-primary"
+              }`}
+            >
               Pricing
             </Link>
+            
           </div>
 
           {/* Desktop CTA */}
@@ -71,22 +137,71 @@ export function Navbar() {
                 onClick={() => {
                   setShowFeatures(true);
                   setIsOpen(false);
+                  handleTabClick("features");
                 }}
-                className="flex items-center gap-1 text-foreground hover:text-primary transition-colors text-left"
+                className={`flex items-center gap-1 transition-colors text-left py-2 px-2 rounded-md ${
+                  activeTab === "features" 
+                    ? "text-primary bg-primary/10" 
+                    : "text-foreground hover:text-primary hover:bg-accent/50"
+                }`}
               >
                 Features
                 <ChevronDown className="w-4 h-4" />
               </button>
-              <Link to="/#strategies" className="text-foreground hover:text-primary transition-colors" onClick={() => setIsOpen(false)}>
+              <Link 
+                to="/#strategies" 
+                onClick={() => {
+                  setIsOpen(false);
+                  handleTabClick("strategies");
+                }}
+                className={`transition-colors py-2 px-2 rounded-md ${
+                  activeTab === "strategies" 
+                    ? "text-primary bg-primary/10" 
+                    : "text-foreground hover:text-primary hover:bg-accent/50"
+                }`}
+              >
                 Strategies
               </Link>
-              <Link to="/#backtesting" className="text-foreground hover:text-primary transition-colors" onClick={() => setIsOpen(false)}>
+              <Link 
+                to="/#backtesting" 
+                onClick={() => {
+                  setIsOpen(false);
+                  handleTabClick("backtesting");
+                }}
+                className={`transition-colors py-2 px-2 rounded-md ${
+                  activeTab === "backtesting" 
+                    ? "text-primary bg-primary/10" 
+                    : "text-foreground hover:text-primary hover:bg-accent/50"
+                }`}
+              >
                 Backtesting
               </Link>
-              <Link to="/#community" className="text-foreground hover:text-primary transition-colors" onClick={() => setIsOpen(false)}>
+              <Link 
+                to="/#community" 
+                onClick={() => {
+                  setIsOpen(false);
+                  handleTabClick("community");
+                }}
+                className={`transition-colors py-2 px-2 rounded-md ${
+                  activeTab === "community" 
+                    ? "text-primary bg-primary/10" 
+                    : "text-foreground hover:text-primary hover:bg-accent/50"
+                }`}
+              >
                 Community
               </Link>
-              <Link to="/pricing" className="text-foreground hover:text-primary transition-colors" onClick={() => setIsOpen(false)}>
+              <Link 
+                to="/pricing" 
+                onClick={() => {
+                  setIsOpen(false);
+                  handleTabClick("pricing");
+                }}
+                className={`transition-colors py-2 px-2 rounded-md ${
+                  activeTab === "pricing" 
+                    ? "text-primary bg-primary/10" 
+                    : "text-foreground hover:text-primary hover:bg-accent/50"
+                }`}
+              >
                 Pricing
               </Link>
               <div className="pt-4 border-t border-border flex flex-col space-y-2">
