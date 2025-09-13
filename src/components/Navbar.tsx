@@ -1,10 +1,12 @@
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, BarChart3 } from "lucide-react";
+import { Menu, X, BarChart3, ChevronDown } from "lucide-react";
 import { Link } from "react-router-dom";
+import { FeaturesShowcase } from "./FeaturesShowcase";
 
 export function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
+  const [showFeatures, setShowFeatures] = useState(false);
 
   return (
     <nav className="fixed top-0 left-0 right-0 z-50 bg-background/80 backdrop-blur-md border-b border-border">
@@ -20,9 +22,13 @@ export function Navbar() {
 
           {/* Desktop Navigation */}
           <div className="hidden md:flex items-center space-x-8">
-            <Link to="/#features" className="text-foreground hover:text-primary transition-colors">
+            <button 
+              onClick={() => setShowFeatures(true)}
+              className="flex items-center gap-1 text-foreground hover:text-primary transition-colors group"
+            >
               Features
-            </Link>
+              <ChevronDown className="w-4 h-4 group-hover:rotate-180 transition-transform duration-200" />
+            </button>
             <Link to="/#strategies" className="text-foreground hover:text-primary transition-colors">
               Strategies
             </Link>
@@ -61,9 +67,16 @@ export function Navbar() {
         {isOpen && (
           <div className="md:hidden py-4 border-t border-border animate-fade-in">
             <div className="flex flex-col space-y-4">
-              <Link to="/#features" className="text-foreground hover:text-primary transition-colors" onClick={() => setIsOpen(false)}>
+              <button 
+                onClick={() => {
+                  setShowFeatures(true);
+                  setIsOpen(false);
+                }}
+                className="flex items-center gap-1 text-foreground hover:text-primary transition-colors text-left"
+              >
                 Features
-              </Link>
+                <ChevronDown className="w-4 h-4" />
+              </button>
               <Link to="/#strategies" className="text-foreground hover:text-primary transition-colors" onClick={() => setIsOpen(false)}>
                 Strategies
               </Link>
@@ -86,6 +99,12 @@ export function Navbar() {
           </div>
         )}
       </div>
+      
+      {/* Features Showcase */}
+      <FeaturesShowcase 
+        isVisible={showFeatures} 
+        onClose={() => setShowFeatures(false)} 
+      />
     </nav>
   );
 }
