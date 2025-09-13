@@ -63,9 +63,9 @@ Backend runs on: http://localhost:4000
 ```bash
 cd predictor-backend
 pip install -r requirements.txt
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
+uvicorn main:app --reload --host 0.0.0.0 --port 8001
 ```
-Predictor API runs on: http://localhost:8000
+Predictor API runs on: http://localhost:8001
 
 ### 4. Frontend Setup (React)
 ```bash
@@ -91,11 +91,13 @@ Frontend runs on: http://localhost:8081
 5. Choose strategy and parameters
 6. Click "Run Backtest" to see results
 
-### Price Prediction
+### Price Prediction (Hybrid Input)
 1. Scroll to "Next Hour Price Predictor"
-2. Enter OHLCV data (Open, High, Low, Close, Volume)
+2. Choose input method:
+   - **Manual Tab**: Enter OHLCV data directly
+   - **Symbol Tab**: Enter stock symbol (e.g., AAPL, RELIANCE.NS, TCS.BO)
 3. Click "Predict Next Hour" for AI prediction
-4. View confidence levels and probability
+4. View confidence levels, probability, and features used
 
 ## 📊 API Endpoints
 
@@ -138,11 +140,18 @@ curl -X POST http://localhost:4000/api/backtest \
   -d '{"symbol":"AAPL","start":"2023-01-01","end":"2024-01-01","strategy":{"kind":"smaCross","params":{"fast":10,"slow":30}}}'
 ```
 
-### Price Predictor
+### Price Predictor (Manual OHLCV)
 ```bash
-curl -X POST http://localhost:8000/predict \
+curl -X POST http://localhost:8001/predict \
   -H "Content-Type: application/json" \
-  -d '{"data":{"open":100,"high":105,"low":98,"close":103,"volume":10000}}'
+  -d '{"ohlcv_data":{"open":100,"high":105,"low":98,"close":103,"volume":10000}}'
+```
+
+### Price Predictor (Symbol-based)
+```bash
+curl -X POST http://localhost:8001/predict \
+  -H "Content-Type: application/json" \
+  -d '{"symbol":"AAPL","timezone":"America/New_York"}'
 ```
 
 ## 🎨 UI Components
@@ -236,9 +245,10 @@ For issues and questions:
 - Run `npm install` in backend directory
 
 **Predictor API not responding:**
-- Check if port 8000 is available
+- Check if port 8001 is available
 - Verify Python version (3.8+)
 - Install requirements: `pip install -r requirements.txt`
+- Test with: `curl http://localhost:8001/health`
 
 **Frontend build errors:**
 - Clear node_modules: `rm -rf node_modules && npm install`

@@ -1,29 +1,32 @@
 """
 Next Hour Price Up/Down Predictor API
 A FastAPI-based service for predicting stock price movements using machine learning.
+Supports both manual OHLCV input and automatic stock symbol fetching.
 """
 
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel, Field
-from typing import List, Optional, Union
+from typing import List, Optional, Union, Dict, Any
 import pandas as pd
 import numpy as np
 from sklearn.ensemble import RandomForestClassifier
 from sklearn.preprocessing import StandardScaler
 import joblib
 import os
-from datetime import datetime
+from datetime import datetime, timedelta
 import logging
+import yfinance as yf
+import pytz
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 app = FastAPI(
-    title="Price Predictor API",
-    description="Predict next hour stock price movements using machine learning",
-    version="1.0.0"
+    title="Hybrid Price Predictor API",
+    description="Predict next hour stock price movements using manual OHLCV or automatic symbol fetching",
+    version="2.0.0"
 )
 
 # Add CORS middleware
@@ -48,15 +51,30 @@ class OHLCVData(BaseModel):
     close: float = Field(..., description="Closing price", gt=0)
     volume: float = Field(..., description="Trading volume", ge=0)
 
-class PredictionRequest(BaseModel):
-    """Request model for single or batch prediction"""
-    data: Union[OHLCVData, List[OHLCVData]] = Field(..., description="OHLCV data for prediction")
+class SymbolRequest(BaseModel):
+    """Request model for symbol-based prediction"""
+    symbol: str = Field(..., description="Stock symbol (e.g., AAPL, RELIANCE.NS, TCS.BO)")
+    timezone: Optional[str] = Field("UTC", description="Timezone for market data (e.g., 'America/New_York', 'Asia/Kolkata')")
+    market: Optional[str] = Field(None, description="Market identifier (NSE, BSE, NYSE, NASDAQ)")
+
+class HybridPredictionRequest(BaseModel):
+    """Request model for hybrid prediction (manual OHLCV or symbol)"""
+    # Manual OHLCV input
+    ohlcv_data: Optional[OHLCVData] = Field(None, description="Manual OHLCV data")
+    
+    # Symbol-based input
+    symbol: Optional[str] = Field(None, description="Stock symbol for automatic data fetching")
+    timezone: Optional[str] = Field("UTC", description="Timezone for market data")
+    market: Optional[str] = Field(None, description="Market identifier")
 
 class PredictionResponse(BaseModel):
     """Response model for predictions"""
-    prediction: Union[int, List[int]] = Field(..., description="Prediction: 1 for up, 0 for down")
-    probability: Union[float, List[float]] = Field(..., description="Confidence probability")
-    confidence: Union[str, List[str]] = Field(..., description="Confidence level (High/Medium/Low)")
+    prediction: int = Field(..., description="Prediction: 1 for up, 0 for down")
+    probability: float = Field(..., description="Confidence probability")
+    confidence: str = Field(..., description="Confidence level (High/Medium/Low)")
+    features_used: Dict[str, Any] = Field(..., description="Features used for prediction")
+    data_source: str = Field(..., description="Source of data (manual or symbol)")
+    symbol: Optional[str] = Field(None, description="Symbol used if applicable")
     error: Optional[str] = Field(None, description="Error message if any")
 
 def validate_ohlcv_data(data: OHLCVData) -> bool:
@@ -69,53 +87,129 @@ def validate_ohlcv_data(data: OHLCVData) -> bool:
         return False
     return True
 
-def create_features(ohlcv_data: List[OHLCVData]) -> np.ndarray:
+def fetch_stock_data(symbol: str, timezone: str = "UTC", market: Optional[str] = None) -> OHLCVData:
+    """
+    Fetch latest stock data using yfinance
+    
+    Args:
+        symbol: Stock symbol (e.g., AAPL, RELIANCE.NS, TCS.BO)
+        timezone: Timezone for market data
+        market: Market identifier (optional)
+        
+    Returns:
+        OHLCVData: Latest stock data
+        
+    Raises:
+        HTTPException: If symbol is invalid or data cannot be fetched
+    """
+    try:
+        logger.info(f"Fetching data for symbol: {symbol}")
+        
+        # Create yfinance ticker
+        ticker = yf.Ticker(symbol)
+        
+        # Get latest data (1 day, 1 minute intervals for most recent hour)
+        hist = ticker.history(period="1d", interval="1m")
+        
+        if hist.empty:
+            raise HTTPException(
+                status_code=404, 
+                detail=f"No data found for symbol '{symbol}'. Please check if the symbol is correct and the market is open."
+            )
+        
+        # Get the most recent data point
+        latest = hist.iloc[-1]
+        
+        # Validate the data
+        if pd.isna(latest['Open']) or pd.isna(latest['High']) or pd.isna(latest['Low']) or pd.isna(latest['Close']):
+            raise HTTPException(
+                status_code=400,
+                detail=f"Incomplete data for symbol '{symbol}'. Market may be closed or symbol may be invalid."
+            )
+        
+        ohlcv = OHLCVData(
+            open=float(latest['Open']),
+            high=float(latest['High']),
+            low=float(latest['Low']),
+            close=float(latest['Close']),
+            volume=float(latest['Volume'])
+        )
+        
+        logger.info(f"Successfully fetched data for {symbol}: O={ohlcv.open}, H={ohlcv.high}, L={ohlcv.low}, C={ohlcv.close}, V={ohlcv.volume}")
+        return ohlcv
+        
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Error fetching data for {symbol}: {e}")
+        raise HTTPException(
+            status_code=500,
+            detail=f"Failed to fetch data for symbol '{symbol}': {str(e)}"
+        )
+
+def create_features(ohlcv_data: OHLCVData) -> Dict[str, Any]:
     """Create features from OHLCV data for model prediction"""
-    features = []
     
-    for i, data in enumerate(ohlcv_data):
-        # Basic price features
-        price_range = data.high - data.low
-        body_size = abs(data.close - data.open)
-        upper_shadow = data.high - max(data.open, data.close)
-        lower_shadow = min(data.open, data.close) - data.low
-        
-        # Price ratios
-        body_ratio = body_size / price_range if price_range > 0 else 0
-        upper_shadow_ratio = upper_shadow / price_range if price_range > 0 else 0
-        lower_shadow_ratio = lower_shadow / price_range if price_range > 0 else 0
-        
-        # Volume features
-        volume_ratio = data.volume / (data.high + data.low + data.close) if (data.high + data.low + data.close) > 0 else 0
-        
-        # Price momentum
-        price_change = (data.close - data.open) / data.open if data.open > 0 else 0
-        
-        # Technical indicators (simplified)
-        rsi_approx = 50 + (price_change * 10)  # Simplified RSI approximation
-        rsi_approx = max(0, min(100, rsi_approx))
-        
-        feature_vector = [
-            data.open,
-            data.high,
-            data.low,
-            data.close,
-            data.volume,
-            price_range,
-            body_size,
-            upper_shadow,
-            lower_shadow,
-            body_ratio,
-            upper_shadow_ratio,
-            lower_shadow_ratio,
-            volume_ratio,
-            price_change,
-            rsi_approx
-        ]
-        
-        features.append(feature_vector)
+    # Basic price features
+    price_range = ohlcv_data.high - ohlcv_data.low
+    body_size = abs(ohlcv_data.close - ohlcv_data.open)
+    upper_shadow = ohlcv_data.high - max(ohlcv_data.open, ohlcv_data.close)
+    lower_shadow = min(ohlcv_data.open, ohlcv_data.close) - ohlcv_data.low
     
-    return np.array(features)
+    # Price ratios
+    body_ratio = body_size / price_range if price_range > 0 else 0
+    upper_shadow_ratio = upper_shadow / price_range if price_range > 0 else 0
+    lower_shadow_ratio = lower_shadow / price_range if price_range > 0 else 0
+    
+    # Volume features
+    volume_ratio = ohlcv_data.volume / (ohlcv_data.high + ohlcv_data.low + ohlcv_data.close) if (ohlcv_data.high + ohlcv_data.low + ohlcv_data.close) > 0 else 0
+    
+    # Price momentum
+    price_change = (ohlcv_data.close - ohlcv_data.open) / ohlcv_data.open if ohlcv_data.open > 0 else 0
+    
+    # Technical indicators (simplified)
+    rsi_approx = 50 + (price_change * 10)  # Simplified RSI approximation
+    rsi_approx = max(0, min(100, rsi_approx))
+    
+    # Create feature vector for model
+    feature_vector = np.array([
+        ohlcv_data.open,
+        ohlcv_data.high,
+        ohlcv_data.low,
+        ohlcv_data.close,
+        ohlcv_data.volume,
+        price_range,
+        body_size,
+        upper_shadow,
+        lower_shadow,
+        body_ratio,
+        upper_shadow_ratio,
+        lower_shadow_ratio,
+        volume_ratio,
+        price_change,
+        rsi_approx
+    ]).reshape(1, -1)
+    
+    # Create features dictionary for response
+    features_dict = {
+        "open": ohlcv_data.open,
+        "high": ohlcv_data.high,
+        "low": ohlcv_data.low,
+        "close": ohlcv_data.close,
+        "volume": ohlcv_data.volume,
+        "price_range": price_range,
+        "body_size": body_size,
+        "upper_shadow": upper_shadow,
+        "lower_shadow": lower_shadow,
+        "body_ratio": body_ratio,
+        "upper_shadow_ratio": upper_shadow_ratio,
+        "lower_shadow_ratio": lower_shadow_ratio,
+        "volume_ratio": volume_ratio,
+        "price_change": price_change,
+        "rsi_approx": rsi_approx
+    }
+    
+    return feature_vector, features_dict
 
 def load_or_create_model():
     """Load existing model or create a new one with demo data"""
@@ -172,8 +266,8 @@ def create_demo_model():
             volume=volume
         )
         
-        features = create_features([ohlcv])[0]
-        X.append(features)
+        features, _ = create_features(ohlcv)
+        X.append(features[0])
         
         # Target: 1 if price goes up next hour, 0 if down
         y.append(1 if price_changes[i] > 0 else 0)
@@ -209,10 +303,17 @@ async def startup_event():
 async def root():
     """Root endpoint with API information"""
     return {
-        "message": "Price Predictor API",
-        "version": "1.0.0",
+        "message": "Hybrid Price Predictor API",
+        "version": "2.0.0",
         "status": "running",
         "model_loaded": model_loaded,
+        "features": [
+            "Manual OHLCV input",
+            "Automatic symbol-based data fetching",
+            "Multi-market support (NSE, BSE, NYSE, NASDAQ)",
+            "Timezone support",
+            "Comprehensive error handling"
+        ],
         "endpoints": {
             "predict": "/predict",
             "health": "/health",
@@ -230,67 +331,82 @@ async def health_check():
     }
 
 @app.post("/predict", response_model=PredictionResponse)
-async def predict_price_movement(request: PredictionRequest):
+async def predict_price_movement(request: HybridPredictionRequest):
     """
-    Predict next hour price movement (up/down) based on OHLCV data.
+    Predict next hour price movement (up/down) using hybrid input.
+    
+    Supports two modes:
+    1. Manual OHLCV input: Provide ohlcv_data directly
+    2. Symbol-based input: Provide symbol to fetch latest data automatically
     
     Args:
-        request: PredictionRequest containing OHLCV data
+        request: HybridPredictionRequest containing either OHLCV data or symbol
         
     Returns:
-        PredictionResponse with prediction, probability, and confidence
+        PredictionResponse with prediction, probability, confidence, and features used
     """
     try:
         if not model_loaded:
             raise HTTPException(status_code=503, detail="Model not loaded")
         
-        # Handle single or batch prediction
-        is_single = isinstance(request.data, OHLCVData)
-        data_list = [request.data] if is_single else request.data
+        # Determine input mode
+        if request.ohlcv_data is not None:
+            # Manual OHLCV input
+            ohlcv_data = request.ohlcv_data
+            data_source = "manual"
+            symbol = None
+            
+            logger.info("Using manual OHLCV input")
+            
+        elif request.symbol is not None:
+            # Symbol-based input
+            symbol = request.symbol.strip().upper()
+            data_source = "symbol"
+            
+            logger.info(f"Fetching data for symbol: {symbol}")
+            ohlcv_data = fetch_stock_data(symbol, request.timezone, request.market)
+            
+        else:
+            raise HTTPException(
+                status_code=400, 
+                detail="Either 'ohlcv_data' or 'symbol' must be provided"
+            )
         
-        # Validate data
-        for data in data_list:
-            if not validate_ohlcv_data(data):
-                raise HTTPException(status_code=400, detail="Invalid OHLCV data: high < low or inconsistent values")
+        # Validate OHLCV data
+        if not validate_ohlcv_data(ohlcv_data):
+            raise HTTPException(
+                status_code=400, 
+                detail="Invalid OHLCV data: high < low or inconsistent values"
+            )
         
         # Create features
-        features = create_features(data_list)
+        feature_vector, features_dict = create_features(ohlcv_data)
         
         # Scale features
-        features_scaled = scaler.transform(features)
+        features_scaled = scaler.transform(feature_vector)
         
-        # Make predictions
-        predictions = model.predict(features_scaled)
-        probabilities = model.predict_proba(features_scaled)
+        # Make prediction
+        prediction = model.predict(features_scaled)[0]
+        probabilities = model.predict_proba(features_scaled)[0]
         
-        # Calculate confidence levels
-        confidences = []
-        pred_probs = []
+        # Calculate confidence
+        max_prob = max(probabilities)
         
-        for i, prob in enumerate(probabilities):
-            max_prob = max(prob)
-            pred_probs.append(max_prob)
-            
-            if max_prob >= 0.8:
-                confidences.append("High")
-            elif max_prob >= 0.6:
-                confidences.append("Medium")
-            else:
-                confidences.append("Low")
-        
-        # Return appropriate format based on input
-        if is_single:
-            return PredictionResponse(
-                prediction=predictions[0],
-                probability=pred_probs[0],
-                confidence=confidences[0]
-            )
+        if max_prob >= 0.8:
+            confidence = "High"
+        elif max_prob >= 0.6:
+            confidence = "Medium"
         else:
-            return PredictionResponse(
-                prediction=predictions.tolist(),
-                probability=pred_probs,
-                confidence=confidences
-            )
+            confidence = "Low"
+        
+        return PredictionResponse(
+            prediction=int(prediction),
+            probability=float(max_prob),
+            confidence=confidence,
+            features_used=features_dict,
+            data_source=data_source,
+            symbol=symbol
+        )
             
     except HTTPException:
         raise
