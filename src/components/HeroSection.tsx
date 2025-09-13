@@ -3,7 +3,7 @@ import { ArrowRight, TrendingUp, Shield, Users } from "lucide-react";
 
 export function HeroSection() {
   return (
-    <section className="relative min-h-screen flex items-center justify-center overflow-hidden">
+    <section className="relative min-h-screen flex items-center justify-center overflow-hidden py-20">
       {/* Background */}
       <div 
         className="absolute inset-0 z-0"
@@ -29,7 +29,7 @@ export function HeroSection() {
           </div>
 
           {/* Main Heading */}
-          <h1 className="text-5xl md:text-7xl font-bold mb-6 leading-tight animate-fade-in">
+          <h1 className="text-5xl md:text-7xl font-bold mb-8 leading-relaxed animate-fade-in">
             Trade Smarter with
             <span className="block bg-gradient-primary bg-clip-text text-transparent">
               AI-Powered <span className="text-4xl md:text-5xl">Algorithms</span>
