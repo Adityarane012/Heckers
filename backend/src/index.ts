@@ -1,3 +1,12 @@
+import dotenv from 'dotenv';
+import path from 'path';
+
+// Load environment variables from .env file
+dotenv.config({ 
+  path: path.resolve(process.cwd(), '.env'),
+  override: true 
+});
+
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
@@ -26,8 +35,14 @@ app.get('/health', (_req, res) => {
 app.use('/api', apiRouter);
 
 const PORT = process.env.PORT || 4000;
+
+// Verify Gemini API key is loaded
+if (!process.env.GEMINI_API_KEY) {
+  console.warn('⚠️  GEMINI_API_KEY not found in environment variables');
+} else {
+  console.log('✅ Gemini API key loaded successfully');
+}
+
 app.listen(PORT, () => {
   console.log(`Backend listening on http://localhost:${PORT}`);
 });
-
-

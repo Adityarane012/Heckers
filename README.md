@@ -10,6 +10,11 @@ A comprehensive full-stack trading platform featuring algorithmic strategy build
 - **Paper Trading**: Risk-free trading simulation
 - **Price Predictor**: AI-powered next hour price movement prediction
 
+### 🤖 AI Agents (Powered by Gemini AI)
+- **Strategy Architect**: Convert natural language trading ideas into structured strategy configurations
+- **Backtest Analyst**: AI-powered analysis of backtest results with actionable insights and recommendations
+- **Trade Coach**: Personalized coaching based on trading history with behavioral analysis and improvement suggestions
+
 ### Technical Features
 - **Multi-Exchange Support**: USA (NASDAQ/NYSE), NSE (India), BSE (India)
 - **Real-time Data**: Yahoo Finance integration with fallback systems
@@ -22,8 +27,9 @@ A comprehensive full-stack trading platform featuring algorithmic strategy build
 AlgoCode/
 ├── backend/                 # Node.js/TypeScript backend
 │   ├── src/
-│   │   ├── routes/         # API endpoints
-│   │   ├── services/       # Business logic
+│   │   ├── routes/         # API endpoints (including AI agents)
+│   │   ├── services/       # Business logic & AI agents
+│   │   │   └── agents/     # Gemini AI agent services
 │   │   └── index.ts        # Server entry point
 │   └── package.json
 ├── predictor-backend/       # Python FastAPI price predictor
@@ -55,9 +61,15 @@ cd AlgoCode
 ```bash
 cd backend
 npm install
+
+# Create .env file with your Gemini API key
+echo "GEMINI_API_KEY=your_api_key_here" > .env
+
 npm run dev
 ```
 Backend runs on: http://localhost:4000
+
+**Note**: To use AI agents, you need a Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey). Add it to your `.env` file as shown above.
 
 ### 3. Price Predictor Setup (Python)
 ```bash
@@ -97,6 +109,12 @@ Frontend runs on: http://localhost:8081
 3. Click "Predict Next Hour" for AI prediction
 4. View confidence levels and probability
 
+### AI Agents
+1. Navigate to `/agents` or click "AI Agents" in the navigation
+2. **Strategy Architect**: Describe your trading idea in plain English to generate structured strategy configurations
+3. **Backtest Analyst**: Upload backtest results to get AI-powered performance analysis and recommendations
+4. **Trade Coach**: Review your trading history for personalized coaching and behavioral insights
+
 ## 📊 API Endpoints
 
 ### Main Backend (Node.js)
@@ -104,6 +122,12 @@ Frontend runs on: http://localhost:8081
 - `POST /api/backtest` - Run backtest
 - `GET /api/strategies` - List strategies
 - `POST /api/strategies` - Save strategy
+
+### AI Agents (Gemini-powered)
+- `GET /api/agents/health` - Agent health check
+- `POST /api/agents/strategy-builder` - Natural language to strategy config
+- `POST /api/agents/backtest-analyst` - AI backtest analysis
+- `POST /api/agents/trade-coach` - Personalized trading coaching
 
 ### Price Predictor (Python)
 - `GET /` - API information
@@ -120,6 +144,7 @@ Create `.env` files in respective directories:
 ```
 PORT=4000
 NODE_ENV=development
+GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
 **Predictor Backend (.env)**
@@ -143,6 +168,24 @@ curl -X POST http://localhost:4000/api/backtest \
 curl -X POST http://localhost:8000/predict \
   -H "Content-Type: application/json" \
   -d '{"data":{"open":100,"high":105,"low":98,"close":103,"volume":10000}}'
+```
+
+### AI Agents
+```bash
+# Strategy Architect
+curl -X POST http://localhost:4000/api/agents/strategy-builder \
+  -H "Content-Type: application/json" \
+  -d '{"prompt":"Buy when RSI drops below 30 and sell when it goes above 70"}'
+
+# Backtest Analyst
+curl -X POST http://localhost:4000/api/agents/backtest-analyst \
+  -H "Content-Type: application/json" \
+  -d '{"stats":{"totalTrades":100,"winRate":0.65,"totalReturn":0.15,"maxDrawdown":-0.08}}'
+
+# Trade Coach
+curl -X POST http://localhost:4000/api/agents/trade-coach \
+  -H "Content-Type: application/json" \
+  -d '{"trades":[{"symbol":"AAPL","side":"buy","quantity":100,"price":150,"timestamp":"2024-01-15T10:30:00Z","pnl":500}]}'
 ```
 
 ## 🎨 UI Components
@@ -252,6 +295,7 @@ For issues and questions:
 
 ## 📈 Roadmap
 
+- [x] AI-powered trading agents (Strategy Architect, Backtest Analyst, Trade Coach)
 - [ ] Real-time data streaming
 - [ ] Advanced ML models (LSTM, Transformer)
 - [ ] Portfolio management
@@ -260,3 +304,6 @@ For issues and questions:
 - [ ] Advanced charting
 - [ ] Risk management tools
 - [ ] Performance analytics dashboard
+- [ ] Additional AI agents (Risk Manager, Market Sentiment Analyzer)
+- [ ] Voice-to-strategy conversion
+- [ ] Automated strategy optimization

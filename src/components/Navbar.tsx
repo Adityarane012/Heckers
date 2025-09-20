@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Menu, X, BarChart3, ChevronDown } from "lucide-react";
+import { Menu, X, BarChart3, ChevronDown, Sparkles } from "lucide-react";
 import { Link, useLocation } from "react-router-dom";
 import { FeaturesShowcase } from "./FeaturesShowcase";
 
@@ -19,6 +19,8 @@ export function Navbar() {
     let newTab = "home";
     if (path === "/pricing") {
       newTab = "pricing";
+    } else if (path === "/agents") {
+      newTab = "agents";
     } else if (hash === "#strategies") {
       newTab = "strategies";
     } else if (hash === "#backtesting") {
@@ -94,6 +96,18 @@ export function Navbar() {
               }`}
             >
               Community
+            </Link>
+            <Link 
+              to="/agents" 
+              onClick={() => handleTabClick("agents")}
+              className={`transition-colors relative py-2 px-1 flex items-center gap-1 ${
+                activeTab === "agents" 
+                  ? "text-primary" 
+                  : "text-foreground hover:text-primary"
+              }`}
+            >
+              <Sparkles className="w-4 h-4" />
+              AI Agents
             </Link>
             <Link 
               to="/pricing" 
@@ -189,6 +203,21 @@ export function Navbar() {
                 }`}
               >
                 Community
+              </Link>
+              <Link 
+                to="/agents" 
+                onClick={() => {
+                  setIsOpen(false);
+                  handleTabClick("agents");
+                }}
+                className={`transition-colors py-2 px-2 rounded-md flex items-center gap-1 ${
+                  activeTab === "agents" 
+                    ? "text-primary bg-primary/10" 
+                    : "text-foreground hover:text-primary hover:bg-accent/50"
+                }`}
+              >
+                <Sparkles className="w-4 h-4" />
+                AI Agents
               </Link>
               <Link 
                 to="/pricing" 

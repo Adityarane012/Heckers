@@ -36,7 +36,7 @@ export async function fetchYahooDaily(symbol: string, start: string, end: string
       }
     } catch (e) {
       lastError = e as Error;
-      console.log(`Data source failed for ${symbol}:`, e.message);
+      console.log(`Data source failed for ${symbol}:`, (e as Error).message);
     }
   }
   
@@ -128,7 +128,7 @@ async function fetchFromAlphaVantage(symbol: string, start: string, end: string)
   
   if (!resp.ok) throw new Error(`Alpha Vantage failed: ${resp.status}`);
   
-  const data = await resp.json();
+  const data = await resp.json() as any;
   const timeSeries = data['Time Series (Daily)'];
   
   if (!timeSeries) throw new Error('No time series data from Alpha Vantage');
@@ -141,13 +141,14 @@ async function fetchFromAlphaVantage(symbol: string, start: string, end: string)
     const dateObj = dayjs(date);
     if (dateObj.isAfter(endDate) || dateObj.isBefore(startDate)) continue;
     
+    const valueData = values as any;
     result.push({
       timestamp: dateObj.valueOf(),
-      open: Number(values['1. open']),
-      high: Number(values['2. high']),
-      low: Number(values['3. low']),
-      close: Number(values['4. close']),
-      volume: Number(values['5. volume'])
+      open: Number(valueData['1. open']),
+      high: Number(valueData['2. high']),
+      low: Number(valueData['3. low']),
+      close: Number(valueData['4. close']),
+      volume: Number(valueData['5. volume'])
     });
   }
   
@@ -166,7 +167,7 @@ async function fetchFromPolygon(symbol: string, start: string, end: string): Pro
   const resp = await fetch(url);
   if (!resp.ok) throw new Error(`Polygon failed: ${resp.status}`);
   
-  const data = await resp.json();
+  const data = await resp.json() as any;
   const results = data.results;
   
   if (!results) throw new Error('No results from Polygon');
