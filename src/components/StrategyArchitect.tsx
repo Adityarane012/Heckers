@@ -79,7 +79,11 @@ export default function StrategyArchitect() {
     "Buy when RSI drops below 30 and sell when it goes above 70",
     "Use moving average crossover with 10-day and 20-day periods",
     "Buy on breakout above 20-day high with 2x volume confirmation",
-    "Momentum strategy that buys when price increases 5% in 3 days"
+    "Momentum strategy that buys when price increases 5% in 3 days",
+    "MACD strategy that buys when MACD line crosses above signal line",
+    "Bollinger Bands strategy that buys when price touches lower band and RSI is oversold",
+    "Support and resistance strategy that buys at support and sells at resistance",
+    "Volume breakout strategy that buys when volume is 3x average and price breaks resistance"
   ];
 
   return (
@@ -116,21 +120,26 @@ export default function StrategyArchitect() {
             </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm text-gray-600">Quick examples:</span>
-            {examplePrompts.map((prompt, index) => (
-              <Button
-                key={index}
-                variant="outline"
-                size="sm"
-                type="button"
-                onClick={() => setInput(prompt)}
-                disabled={loading}
-                className="text-xs"
-              >
-                {prompt.substring(0, 30)}...
-              </Button>
-            ))}
+          <div className="space-y-3">
+            <div className="text-sm font-medium text-gray-700">Quick Examples:</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+              {examplePrompts.map((prompt, index) => (
+                <Button
+                  key={index}
+                  variant="outline"
+                  size="sm"
+                  type="button"
+                  onClick={() => setInput(prompt)}
+                  disabled={loading}
+                  className="text-xs h-auto p-3 text-left justify-start hover:bg-blue-50 hover:border-blue-200 transition-colors"
+                >
+                  <div className="flex items-start gap-2">
+                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                    <span className="leading-relaxed">{prompt}</span>
+                  </div>
+                </Button>
+              ))}
+            </div>
           </div>
 
           <div className="flex gap-2">
