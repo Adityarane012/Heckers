@@ -120,9 +120,9 @@ export default function StrategyArchitect() {
             </div>
           </div>
 
-          <div className="space-y-3">
-            <div className="text-sm font-medium text-gray-700">Quick Examples:</div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+          <div className="space-y-4">
+            <div className="text-base font-medium text-gray-700">Quick Examples:</div>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
               {examplePrompts.map((prompt, index) => (
                 <Button
                   key={index}
@@ -131,10 +131,10 @@ export default function StrategyArchitect() {
                   type="button"
                   onClick={() => setInput(prompt)}
                   disabled={loading}
-                  className="text-xs h-auto p-3 text-left justify-start hover:bg-blue-50 hover:border-blue-200 transition-colors"
+                  className="text-sm h-auto p-4 text-left justify-start hover:bg-blue-50 hover:border-blue-200 transition-colors min-h-[60px]"
                 >
-                  <div className="flex items-start gap-2">
-                    <div className="w-2 h-2 bg-blue-500 rounded-full mt-1.5 flex-shrink-0"></div>
+                  <div className="flex items-start gap-3">
+                    <div className="w-3 h-3 bg-blue-500 rounded-full mt-1 flex-shrink-0"></div>
                     <span className="leading-relaxed">{prompt}</span>
                   </div>
                 </Button>
