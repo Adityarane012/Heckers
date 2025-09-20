@@ -76,14 +76,14 @@ export default function StrategyArchitect() {
   };
 
   const examplePrompts = [
-    "Buy when RSI drops below 30 and sell when it goes above 70",
-    "Use moving average crossover with 10-day and 20-day periods",
-    "Buy on breakout above 20-day high with 2x volume confirmation",
-    "Momentum strategy that buys when price increases 5% in 3 days",
-    "MACD strategy that buys when MACD line crosses above signal line",
-    "Bollinger Bands strategy that buys when price touches lower band and RSI is oversold",
-    "Support and resistance strategy that buys at support and sells at resistance",
-    "Volume breakout strategy that buys when volume is 3x average and price breaks resistance"
+    "RSI oversold/overbought (30/70)",
+    "Moving average crossover (10/20 day)",
+    "Breakout with volume confirmation",
+    "Momentum strategy (5% in 3 days)",
+    "MACD signal line crossover",
+    "Bollinger Bands + RSI oversold",
+    "Support and resistance levels",
+    "Volume breakout (3x average)"
   ];
 
   return (
