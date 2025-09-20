@@ -30,89 +30,89 @@ const MOCK_RESPONSES = {
   },
   "rationale": "This is a simple moving average crossover strategy that buys when the fast MA crosses above the slow MA and sells when it crosses below. This strategy works well in trending markets."
 }`,
-  backtest: `## Backtest Analysis Summary
+  backtest: `Backtest Analysis Summary
 
-**Overall Performance:** The strategy shows moderate performance with room for improvement.
+Overall Performance: The strategy shows moderate performance with room for improvement.
 
-**Key Metrics:**
+Key Metrics:
 - Win Rate: 45% (below optimal 50%+)
 - Profit Factor: 1.2 (decent but could be better)
 - Max Drawdown: 15% (acceptable risk level)
 
-**Strengths:**
+Strengths:
 - Consistent execution in trending markets
 - Low transaction costs due to infrequent trades
 - Good risk management with stop losses
 
-**Areas for Improvement:**
+Areas for Improvement:
 - Consider adding volume confirmation
 - Optimize MA periods for current market conditions
 - Add trend filter to avoid choppy markets
 
-**Recommendations:**
+Recommendations:
 1. Test with different MA periods (5/15 or 8/21)
 2. Add RSI filter to avoid overbought entries
 3. Consider position sizing based on volatility`,
-  coaching: `## Personal Trading Coach Feedback
+  coaching: `Personal Trading Coach Feedback
 
-**Trading Pattern Analysis:**
+Trading Pattern Analysis:
 Your recent trades show good discipline in following your strategy, but there are some areas for improvement.
 
-**Strengths:**
-✅ Consistent risk management with 2% stop losses
-✅ Good entry timing on breakout strategies
-✅ Proper position sizing
+Strengths:
+- Consistent risk management with 2% stop losses
+- Good entry timing on breakout strategies
+- Proper position sizing
 
-**Areas to Improve:**
-⚠️ Holding losing positions too long (average 5 days vs 2-day target)
-⚠️ Taking profits too early on winning trades
-⚠️ Emotional trading during market volatility
+Areas to Improve:
+- Holding losing positions too long (average 5 days vs 2-day target)
+- Taking profits too early on winning trades
+- Emotional trading during market volatility
 
-**Actionable Recommendations:**
+Actionable Recommendations:
 1. Set strict time-based exits for losing positions
 2. Use trailing stops to let winners run
 3. Take breaks during high volatility periods
 4. Journal your emotions before each trade
 
-**Motivation:** You're on the right track! Focus on these small improvements and you'll see significant gains in your trading performance.`,
-  ohlcv: `## OHLCV Market Data Analysis
+Motivation: You're on the right track! Focus on these small improvements and you'll see significant gains in your trading performance.`,
+  ohlcv: `OHLCV Market Data Analysis
 
-**Data Overview:**
+Data Overview:
 - Symbol: AAPL
 - Data Points: 252 periods (1 year)
 - Date Range: 2023-01-01 to 2023-12-31
 
-**Price Action Analysis:**
-📈 **Trend:** Strong uptrend with 23% annual return
-📊 **Support/Resistance:** Key support at $150, resistance at $200
-📉 **Volatility:** Moderate volatility (18% annualized)
-⚡ **Momentum:** Bullish momentum with higher highs and higher lows
+Price Action Analysis:
+Trend: Strong uptrend with 23% annual return
+Support/Resistance: Key support at $150, resistance at $200
+Volatility: Moderate volatility (18% annualized)
+Momentum: Bullish momentum with higher highs and higher lows
 
-**Volume Analysis:**
-📊 **Volume Trend:** Increasing volume on up days (bullish confirmation)
-🔍 **Volume Spikes:** Notable spikes on earnings and product announcements
-📈 **Volume-Price:** Strong correlation between volume and price movement
+Volume Analysis:
+Volume Trend: Increasing volume on up days (bullish confirmation)
+Volume Spikes: Notable spikes on earnings and product announcements
+Volume-Price: Strong correlation between volume and price movement
 
-**Technical Patterns:**
-🕯️ **Candlestick:** Multiple bullish engulfing patterns
-📈 **Chart Pattern:** Ascending triangle formation
-🎯 **Breakout:** Recent breakout above $190 resistance
+Technical Patterns:
+Candlestick: Multiple bullish engulfing patterns
+Chart Pattern: Ascending triangle formation
+Breakout: Recent breakout above $190 resistance
 
-**Risk Assessment:**
-⚠️ **Volatility:** 18% annualized volatility (moderate risk)
-📉 **Max Drawdown:** 12% during market correction
-⚖️ **Risk-Reward:** 2.5:1 ratio on recent setups
+Risk Assessment:
+Volatility: 18% annualized volatility (moderate risk)
+Max Drawdown: 12% during market correction
+Risk-Reward: 2.5:1 ratio on recent setups
 
-**Trading Opportunities:**
-🎯 **Entry:** $195-200 range for continuation plays
-🛡️ **Stop Loss:** $185 (below recent support)
-🎯 **Take Profit:** $220-230 (next resistance level)
-📊 **Position Size:** 2-3% of portfolio per trade
+Trading Opportunities:
+Entry: $195-200 range for continuation plays
+Stop Loss: $185 (below recent support)
+Take Profit: $220-230 (next resistance level)
+Position Size: 2-3% of portfolio per trade
 
-**Market Context:**
-🌍 **Sector:** Technology sector showing strength
-📊 **Market Sentiment:** Bullish with strong institutional buying
-🔍 **Macro Factors:** Watch for interest rate changes and tech earnings`
+Market Context:
+Sector: Technology sector showing strength
+Market Sentiment: Bullish with strong institutional buying
+Macro Factors: Watch for interest rate changes and tech earnings`
 };
 
 // Utility function for all agent prompts
@@ -247,7 +247,9 @@ Analyze the following backtest results and provide a comprehensive but concise s
 Backtest Statistics:
 ${JSON.stringify(backtestStats, null, 2)}
 
-Provide your analysis in a clear, structured format that helps traders understand their strategy's performance and how to improve it. Be direct and actionable.`;
+Provide your analysis in a clear, structured format that helps traders understand their strategy's performance and how to improve it. Be direct and actionable.
+
+IMPORTANT: Do not use markdown formatting like #, *, **, or other markdown symbols. Use plain text with clear headings and bullet points using simple text formatting.`;
 
   try {
     return await callGeminiAI(prompt);
