@@ -7,7 +7,7 @@ import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
-import { Loader2, BarChart3, Copy, CheckCircle, Upload, FileText, FileUp, AlertTriangle, Info } from 'lucide-react';
+import { Loader2, BarChart3, Copy, CheckCircle, Upload, FileText, FileUp, AlertTriangle, Info, Download, Eye, Settings, Target, TrendingUp, Shield, Database, Zap } from 'lucide-react';
 import { useOHLCVAnalyst } from '../hooks/useAgents';
 
 interface OHLCVData {
@@ -331,56 +331,76 @@ export default function OHLCVAnalyst() {
 
   return (
     <Card className="w-full max-w-6xl mx-auto">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <BarChart3 className="h-5 w-5 text-green-500" />
-          AI OHLCV Data Analyst
-          <Badge variant="secondary" className="ml-auto">
+      <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-green-100 rounded-lg">
+              <BarChart3 className="h-6 w-6 text-green-600" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl font-bold text-green-900">
+                AI OHLCV Data Analyst
+              </CardTitle>
+              <CardDescription className="text-green-700 mt-1">
+                Upload OHLCV market data for comprehensive AI-powered analysis including price action, volume patterns, technical indicators, and trading opportunities.
+              </CardDescription>
+            </div>
+          </div>
+          <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
+            <Zap className="h-3 w-3 mr-1" />
             Powered by Gemini AI
           </Badge>
-        </CardTitle>
-        <CardDescription>
-          Upload OHLCV (Open, High, Low, Close, Volume) market data for comprehensive AI-powered analysis including price action, volume patterns, technical indicators, and trading opportunities.
-        </CardDescription>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-4">
-        <form onSubmit={handleSubmit} className="space-y-4">
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <label htmlFor="symbol" className="text-sm font-medium">
-                Symbol (Optional):
-              </label>
-              <Input
-                id="symbol"
-                value={symbol}
-                onChange={(e) => setSymbol(e.target.value)}
-                placeholder="e.g., AAPL, TSLA, BTC-USD"
-                disabled={loading}
-              />
+      <CardContent className="space-y-6">
+        <form onSubmit={handleSubmit} className="space-y-6">
+          {/* Input Configuration Section */}
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border">
+            <div className="flex items-center gap-2 mb-4">
+              <Settings className="h-4 w-4 text-blue-600" />
+              <h3 className="font-semibold text-blue-900">Analysis Configuration</h3>
             </div>
-            <div className="space-y-2">
-              <label htmlFor="analysis-type" className="text-sm font-medium">
-                Analysis Type:
-              </label>
-              <Select value={analysisType} onValueChange={setAnalysisType} disabled={loading}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select analysis type" />
-                </SelectTrigger>
-                <SelectContent>
-                  {analysisTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-2">
+                <label htmlFor="symbol" className="text-sm font-medium text-blue-800">
+                  Symbol (Optional):
+                </label>
+                <Input
+                  id="symbol"
+                  value={symbol}
+                  onChange={(e) => setSymbol(e.target.value)}
+                  placeholder="e.g., AAPL, TSLA, BTC-USD"
+                  disabled={loading}
+                  className="bg-white border-blue-200 focus:border-blue-400"
+                />
+              </div>
+              <div className="space-y-2">
+                <label htmlFor="analysis-type" className="text-sm font-medium text-blue-800">
+                  Analysis Type:
+                </label>
+                <Select value={analysisType} onValueChange={setAnalysisType} disabled={loading}>
+                  <SelectTrigger className="bg-white border-blue-200 focus:border-blue-400">
+                    <SelectValue placeholder="Select analysis type" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {analysisTypes.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </div>
 
-          {/* File Upload */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Upload Data File:</label>
-            <div className="flex items-center gap-2">
+          {/* File Upload Section */}
+          <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border">
+            <div className="flex items-center gap-2 mb-3">
+              <Upload className="h-4 w-4 text-purple-600" />
+              <h3 className="font-semibold text-purple-900">Upload Data File</h3>
+            </div>
+            <div className="flex items-center gap-3">
               <input
                 ref={fileInputRef}
                 type="file"
@@ -393,134 +413,174 @@ export default function OHLCVAnalyst() {
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={loading}
-                className="flex items-center gap-2"
+                className="flex items-center gap-2 bg-white border-purple-200 hover:border-purple-400 hover:bg-purple-50"
               >
                 <FileUp className="h-4 w-4" />
                 Choose File
               </Button>
-              <span className="text-sm text-gray-500">
-                Supports CSV, JSON, or raw text files
-              </span>
+              <div className="text-sm text-purple-700">
+                <span className="font-medium">Supported formats:</span> CSV, JSON, or raw text files
+              </div>
             </div>
           </div>
 
           {/* Data Input Tabs */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium">Or paste your data directly:</label>
-            <Tabs value={inputFormat} onValueChange={(value) => setInputFormat(value as 'json' | 'csv' | 'raw')}>
-              <TabsList className="grid w-full grid-cols-3">
-                <TabsTrigger value="json">JSON</TabsTrigger>
-                <TabsTrigger value="csv">CSV</TabsTrigger>
-                <TabsTrigger value="raw">Raw Text</TabsTrigger>
-              </TabsList>
+          <div className="bg-gradient-to-r from-gray-50 to-slate-50 p-4 rounded-lg border">
+            <div className="flex items-center gap-2 mb-4">
+              <Database className="h-4 w-4 text-gray-600" />
+              <h3 className="font-semibold text-gray-900">Data Input</h3>
+            </div>
+            <div className="space-y-3">
+              <label className="text-sm font-medium text-gray-700">Or paste your data directly:</label>
+              <Tabs value={inputFormat} onValueChange={(value) => setInputFormat(value as 'json' | 'csv' | 'raw')}>
+                <TabsList className="grid w-full grid-cols-3 bg-white border">
+                  <TabsTrigger value="json" className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900">
+                    <FileText className="h-3 w-3 mr-1" />
+                    JSON
+                  </TabsTrigger>
+                  <TabsTrigger value="csv" className="data-[state=active]:bg-green-100 data-[state=active]:text-green-900">
+                    <FileText className="h-3 w-3 mr-1" />
+                    CSV
+                  </TabsTrigger>
+                  <TabsTrigger value="raw" className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-900">
+                    <FileText className="h-3 w-3 mr-1" />
+                    Raw Text
+                  </TabsTrigger>
+                </TabsList>
               
-              <TabsContent value="json" className="space-y-2">
-                <Textarea
-                  value={jsonInput}
-                  onChange={(e) => setJsonInput(e.target.value)}
-                  placeholder={`Paste your OHLCV data here as JSON array:\n\n${JSON.stringify(exampleOHLCV, null, 2)}`}
-                  rows={12}
-                  className="min-h-[300px] font-mono text-sm"
-                  disabled={loading}
-                />
-                <div className="text-sm text-gray-500">
-                  {jsonInput.length}/10000 characters
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="csv" className="space-y-2">
-                <Textarea
-                  value={csvInput}
-                  onChange={(e) => setCsvInput(e.target.value)}
-                  placeholder={`Paste your CSV data here:\n\ndate,open,high,low,close,volume\n2024-01-01,150.0,155.5,149.2,154.8,45000000\n2024-01-02,154.8,157.2,153.1,156.5,52000000`}
-                  rows={12}
-                  className="min-h-[300px] font-mono text-sm"
-                  disabled={loading}
-                />
-                <div className="text-sm text-gray-500">
-                  {csvInput.length}/10000 characters
-                </div>
-              </TabsContent>
-              
-              <TabsContent value="raw" className="space-y-2">
-                <Textarea
-                  value={jsonInput}
-                  onChange={(e) => setJsonInput(e.target.value)}
-                  placeholder={`Paste your raw data here (space or tab separated):\n\n2024-01-01 150.0 155.5 149.2 154.8 45000000\n2024-01-02 154.8 157.2 153.1 156.5 52000000`}
-                  rows={12}
-                  className="min-h-[300px] font-mono text-sm"
-                  disabled={loading}
-                />
-                <div className="text-sm text-gray-500">
-                  {jsonInput.length}/10000 characters
-                </div>
-              </TabsContent>
-            </Tabs>
+                <TabsContent value="json" className="space-y-2">
+                  <div className="bg-white p-3 rounded-lg border">
+                    <Textarea
+                      value={jsonInput}
+                      onChange={(e) => setJsonInput(e.target.value)}
+                      placeholder={`Paste your OHLCV data here as JSON array:\n\n${JSON.stringify(exampleOHLCV, null, 2)}`}
+                      rows={12}
+                      className="min-h-[300px] font-mono text-sm border-0 focus:ring-0"
+                      disabled={loading}
+                    />
+                    <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
+                      <span>{jsonInput.length}/10000 characters</span>
+                      <Badge variant="outline" className="text-xs">JSON Format</Badge>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="csv" className="space-y-2">
+                  <div className="bg-white p-3 rounded-lg border">
+                    <Textarea
+                      value={csvInput}
+                      onChange={(e) => setCsvInput(e.target.value)}
+                      placeholder={`Paste your CSV data here:\n\ndate,open,high,low,close,volume\n2024-01-01,150.0,155.5,149.2,154.8,45000000\n2024-01-02,154.8,157.2,153.1,156.5,52000000`}
+                      rows={12}
+                      className="min-h-[300px] font-mono text-sm border-0 focus:ring-0"
+                      disabled={loading}
+                    />
+                    <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
+                      <span>{csvInput.length}/10000 characters</span>
+                      <Badge variant="outline" className="text-xs">CSV Format</Badge>
+                    </div>
+                  </div>
+                </TabsContent>
+                
+                <TabsContent value="raw" className="space-y-2">
+                  <div className="bg-white p-3 rounded-lg border">
+                    <Textarea
+                      value={jsonInput}
+                      onChange={(e) => setJsonInput(e.target.value)}
+                      placeholder={`Paste your raw data here (space or tab separated):\n\n2024-01-01 150.0 155.5 149.2 154.8 45000000\n2024-01-02 154.8 157.2 153.1 156.5 52000000`}
+                      rows={12}
+                      className="min-h-[300px] font-mono text-sm border-0 focus:ring-0"
+                      disabled={loading}
+                    />
+                    <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
+                      <span>{jsonInput.length}/10000 characters</span>
+                      <Badge variant="outline" className="text-xs">Raw Text</Badge>
+                    </div>
+                  </div>
+                </TabsContent>
+              </Tabs>
+            </div>
           </div>
 
-          <div className="flex flex-wrap gap-2">
-            <span className="text-sm text-gray-600">Quick examples:</span>
-            <Button
-              variant="outline"
-              size="sm"
-              type="button"
-              onClick={() => {
-                setJsonInput(JSON.stringify(exampleOHLCV, null, 2));
-                setInputFormat('json');
-              }}
-              disabled={loading}
-              className="text-xs"
-            >
-              <FileText className="h-3 w-3 mr-1" />
-              Load JSON Example
-            </Button>
-            <Button
-              variant="outline"
-              size="sm"
-              type="button"
-              onClick={() => {
-                setCsvInput(`date,open,high,low,close,volume
+          {/* Example Data Section */}
+          <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-lg border">
+            <div className="flex items-center gap-2 mb-3">
+              <Target className="h-4 w-4 text-amber-600" />
+              <h3 className="font-semibold text-amber-900">Quick Examples</h3>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                type="button"
+                onClick={() => {
+                  setJsonInput(JSON.stringify(exampleOHLCV, null, 2));
+                  setInputFormat('json');
+                }}
+                disabled={loading}
+                className="text-xs bg-white border-amber-200 hover:border-amber-400 hover:bg-amber-50"
+              >
+                <FileText className="h-3 w-3 mr-1" />
+                Load JSON Example
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                type="button"
+                onClick={() => {
+                  setCsvInput(`date,open,high,low,close,volume
 2024-01-01,150.0,155.5,149.2,154.8,45000000
 2024-01-02,154.8,157.2,153.1,156.5,52000000
 2024-01-03,156.5,159.8,155.2,158.3,48000000`);
-                setInputFormat('csv');
-              }}
-              disabled={loading}
-              className="text-xs"
-            >
-              <FileText className="h-3 w-3 mr-1" />
-              Load CSV Example
-            </Button>
+                  setInputFormat('csv');
+                }}
+                disabled={loading}
+                className="text-xs bg-white border-amber-200 hover:border-amber-400 hover:bg-amber-50"
+              >
+                <FileText className="h-3 w-3 mr-1" />
+                Load CSV Example
+              </Button>
+            </div>
           </div>
 
-          <div className="flex gap-2">
-            <Button
-              type="submit"
-              disabled={!getCurrentInput().trim() || loading || getCurrentInput().length > 10000}
-              className="flex items-center gap-2"
-            >
-              {loading ? (
-                <>
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                  Analyzing Data...
-                </>
-              ) : (
-                <>
-                  <BarChart3 className="h-4 w-4" />
-                  Analyze with Gemini AI
-                </>
-              )}
-            </Button>
-            {(data || error || validationResult) && (
-              <Button
-                type="button"
-                variant="outline"
-                onClick={handleReset}
-                disabled={loading}
-              >
-                Reset
-              </Button>
-            )}
+          {/* Action Buttons */}
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-green-600" />
+                <span className="font-medium text-green-900">Ready to Analyze</span>
+              </div>
+              <div className="flex gap-2">
+                <Button
+                  type="submit"
+                  disabled={!getCurrentInput().trim() || loading || getCurrentInput().length > 10000}
+                  className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
+                >
+                  {loading ? (
+                    <>
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      Analyzing Data...
+                    </>
+                  ) : (
+                    <>
+                      <BarChart3 className="h-4 w-4" />
+                      Analyze with Gemini AI
+                    </>
+                  )}
+                </Button>
+                {(data || error || validationResult) && (
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={handleReset}
+                    disabled={loading}
+                    className="border-green-200 hover:border-green-400 hover:bg-green-50"
+                  >
+                    Reset
+                  </Button>
+                )}
+              </div>
+            </div>
           </div>
         </form>
 
@@ -578,76 +638,126 @@ export default function OHLCVAnalyst() {
         )}
 
         {data && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold">AI Market Analysis</h3>
-              <div className="flex items-center gap-2">
-                <Badge variant="default" className="bg-green-100 text-green-800">
-                  <CheckCircle className="h-3 w-3 mr-1" />
-                  {data.data_points_analyzed} Data Points
+          <div className="space-y-6">
+            {/* Results Header */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <Eye className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-green-900">AI Market Analysis</h3>
+                    <p className="text-sm text-green-700">Comprehensive analysis of your market data</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="default" className="bg-green-100 text-green-800">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    {data.data_points_analyzed} Data Points
+                  </Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleCopy}
+                    className="flex items-center gap-1 border-green-200 hover:border-green-400 hover:bg-green-50"
+                  >
+                    <Copy className="h-3 w-3" />
+                    {copied ? 'Copied!' : 'Copy'}
+                  </Button>
+                </div>
+              </div>
+            </div>
+
+            {/* Analysis Metadata */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border">
+                <div className="flex items-center gap-2 mb-2">
+                  <Target className="h-4 w-4 text-blue-600" />
+                  <div className="font-medium text-blue-900">Symbol</div>
+                </div>
+                <div className="text-blue-700 font-semibold">{data.symbol}</div>
+              </div>
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border">
+                <div className="flex items-center gap-2 mb-2">
+                  <Settings className="h-4 w-4 text-green-600" />
+                  <div className="font-medium text-green-900">Analysis Type</div>
+                </div>
+                <div className="text-green-700 font-semibold">{data.analysis_type}</div>
+              </div>
+              <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border">
+                <div className="flex items-center gap-2 mb-2">
+                  <Database className="h-4 w-4 text-purple-600" />
+                  <div className="font-medium text-purple-900">Data Points</div>
+                </div>
+                <div className="text-purple-700 font-semibold">{data.data_points_analyzed}</div>
+              </div>
+            </div>
+
+            {/* Analysis Results */}
+            <div className="bg-gradient-to-r from-gray-50 to-slate-50 p-4 rounded-lg border">
+              <div className="flex items-center gap-2 mb-4">
+                <BarChart3 className="h-4 w-4 text-gray-600" />
+                <h4 className="font-semibold text-gray-900">Analysis Results</h4>
+              </div>
+              <div className="bg-white p-4 rounded-lg border">
+                <pre className="whitespace-pre-wrap text-sm text-gray-800 leading-relaxed">
+                  {data.analysis}
+                </pre>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
+              <div className="flex items-center gap-1">
+                <BarChart3 className="h-3 w-3" />
+                Generated by {data.powered_by}
+              </div>
+              <div className="flex items-center gap-4">
+                <span>Analysis Complete</span>
+                <Badge variant="outline" className="text-xs">
+                  Ready for Trading
                 </Badge>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={handleCopy}
-                  className="flex items-center gap-1"
-                >
-                  <Copy className="h-3 w-3" />
-                  {copied ? 'Copied!' : 'Copy'}
-                </Button>
               </div>
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
-              <div className="bg-blue-50 p-3 rounded-lg">
-                <div className="font-medium text-blue-900">Symbol</div>
-                <div className="text-blue-700">{data.symbol}</div>
-              </div>
-              <div className="bg-green-50 p-3 rounded-lg">
-                <div className="font-medium text-green-900">Analysis Type</div>
-                <div className="text-green-700">{data.analysis_type}</div>
-              </div>
-              <div className="bg-purple-50 p-3 rounded-lg">
-                <div className="font-medium text-purple-900">Data Points</div>
-                <div className="text-purple-700">{data.data_points_analyzed}</div>
-              </div>
-            </div>
-
-            <div className="relative">
-              <pre className="bg-gray-50 p-4 rounded-lg overflow-x-auto text-sm border whitespace-pre-wrap">
-                <code>{data.analysis}</code>
-              </pre>
-            </div>
-
-            <div className="text-xs text-gray-500 flex items-center gap-1">
-              <BarChart3 className="h-3 w-3" />
-              Generated by {data.powered_by}
             </div>
           </div>
         )}
 
-        <div className="bg-green-50 p-4 rounded-lg">
-          <h4 className="font-medium text-green-900 mb-2">Supported Data Formats:</h4>
-          <div className="grid md:grid-cols-3 gap-4 text-sm text-green-800">
-            <div>
-              <div className="font-medium mb-1">JSON Format:</div>
-              <ul className="space-y-1">
+        {/* Supported Data Formats */}
+        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border">
+          <div className="flex items-center gap-2 mb-4">
+            <Shield className="h-4 w-4 text-green-600" />
+            <h4 className="font-semibold text-green-900">Supported Data Formats</h4>
+          </div>
+          <div className="grid md:grid-cols-3 gap-4">
+            <div className="bg-white p-3 rounded-lg border border-green-200">
+              <div className="flex items-center gap-2 mb-2">
+                <FileText className="h-4 w-4 text-blue-600" />
+                <strong className="text-blue-900">JSON Format</strong>
+              </div>
+              <ul className="space-y-1 text-sm text-blue-800">
                 <li>• Array of objects</li>
                 <li>• timestamp, open, high, low, close, volume</li>
                 <li>• Unix timestamp in milliseconds</li>
               </ul>
             </div>
-            <div>
-              <div className="font-medium mb-1">CSV Format:</div>
-              <ul className="space-y-1">
+            <div className="bg-white p-3 rounded-lg border border-green-200">
+              <div className="flex items-center gap-2 mb-2">
+                <FileText className="h-4 w-4 text-green-600" />
+                <strong className="text-green-900">CSV Format</strong>
+              </div>
+              <ul className="space-y-1 text-sm text-green-800">
                 <li>• Header row required</li>
                 <li>• Flexible column names</li>
                 <li>• Auto-detects date formats</li>
               </ul>
             </div>
-            <div>
-              <div className="font-medium mb-1">Raw Text:</div>
-              <ul className="space-y-1">
+            <div className="bg-white p-3 rounded-lg border border-green-200">
+              <div className="flex items-center gap-2 mb-2">
+                <FileText className="h-4 w-4 text-purple-600" />
+                <strong className="text-purple-900">Raw Text</strong>
+              </div>
+              <ul className="space-y-1 text-sm text-purple-800">
                 <li>• Space/tab separated</li>
                 <li>• Date OHLCV format</li>
                 <li>• One row per data point</li>
@@ -656,17 +766,54 @@ export default function OHLCVAnalyst() {
           </div>
         </div>
 
-        <div className="bg-blue-50 p-4 rounded-lg">
-          <h4 className="font-medium text-blue-900 mb-2">Analysis Features:</h4>
-          <ul className="text-sm text-blue-800 space-y-1">
-            <li>• Price action and trend analysis</li>
-            <li>• Volume pattern recognition</li>
-            <li>• Technical indicator insights</li>
-            <li>• Support and resistance levels</li>
-            <li>• Risk assessment and volatility metrics</li>
-            <li>• Trading opportunity identification</li>
-            <li>• Market sentiment analysis</li>
-          </ul>
+        {/* Analysis Features */}
+        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border">
+          <div className="flex items-center gap-2 mb-4">
+            <TrendingUp className="h-4 w-4 text-blue-600" />
+            <h4 className="font-semibold text-blue-900">Analysis Features</h4>
+          </div>
+          <div className="grid md:grid-cols-2 gap-4">
+            <div className="bg-white p-3 rounded-lg border border-blue-200">
+              <ul className="text-sm text-blue-800 space-y-2">
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Price action and trend analysis
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Volume pattern recognition
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Technical indicator insights
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Support and resistance levels
+                </li>
+              </ul>
+            </div>
+            <div className="bg-white p-3 rounded-lg border border-blue-200">
+              <ul className="text-sm text-blue-800 space-y-2">
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Risk assessment and volatility metrics
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Trading opportunity identification
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Market sentiment analysis
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  AI-powered insights and recommendations
+                </li>
+              </ul>
+            </div>
+          </div>
         </div>
       </CardContent>
     </Card>
