@@ -25,7 +25,7 @@ export function HeroSection() {
           {/* Badge */}
           <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/20 border border-primary/30 mb-8 animate-fade-in">
             <TrendingUp className="w-4 h-4 mr-2 text-primary" />
-            <span className="text-sm font-medium text-primary">Democratizing Algorithmic Trading</span>
+            <span className="text-sm font-medium text-primary">Advanced Trading Platform</span>
           </div>
 
           {/* Main Heading */}
