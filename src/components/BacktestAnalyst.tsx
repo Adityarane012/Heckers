@@ -3,7 +3,7 @@ import { Button } from './ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/card';
 import { Alert, AlertDescription } from './ui/alert';
 import { Badge } from './ui/badge';
-import { Loader2, Brain, TrendingUp, AlertTriangle } from 'lucide-react';
+import { Loader2, Brain, TrendingUp, AlertTriangle, Zap, Target, Shield, BarChart3, CheckCircle, Copy, Eye, Settings, Database } from 'lucide-react';
 import { useBacktestAnalyst } from '../hooks/useAgents';
 
 interface BacktestAnalystProps {
@@ -48,24 +48,56 @@ export default function BacktestAnalyst({
 
   if (!hasResults && !data) {
     return (
-      <Card className="w-full">
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <Brain className="h-5 w-5 text-purple-500" />
-            AI Backtest Analyst
-            <Badge variant="secondary" className="ml-auto">
+      <Card className="w-full max-w-4xl mx-auto">
+        <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-3">
+              <div className="p-2 bg-purple-100 rounded-lg">
+                <Brain className="h-6 w-6 text-purple-600" />
+              </div>
+              <div>
+                <CardTitle className="text-2xl font-bold text-purple-900">
+                  AI Backtest Analyst
+                </CardTitle>
+                <CardDescription className="text-purple-700 mt-1">
+                  Run a backtest to get AI-powered analysis of your strategy's performance.
+                </CardDescription>
+              </div>
+            </div>
+            <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-purple-200">
+              <Zap className="h-3 w-3 mr-1" />
               Powered by Gemini AI
             </Badge>
-          </CardTitle>
-          <CardDescription>
-            Run a backtest to get AI-powered analysis of your strategy's performance.
-          </CardDescription>
+          </div>
         </CardHeader>
         <CardContent>
-          <div className="text-center py-8 text-gray-500">
-            <Brain className="h-12 w-12 mx-auto mb-4 text-gray-300" />
-            <p>No backtest results available for analysis.</p>
-            <p className="text-sm mt-2">Complete a backtest to unlock AI insights.</p>
+          <div className="text-center py-12 text-gray-500">
+            <div className="p-4 bg-purple-100 rounded-full w-20 h-20 mx-auto mb-6 flex items-center justify-center">
+              <Brain className="h-10 w-10 text-purple-400" />
+            </div>
+            <h3 className="text-lg font-semibold text-gray-700 mb-2">No Backtest Results Available</h3>
+            <p className="text-gray-600 mb-4">Complete a backtest to unlock AI-powered performance analysis.</p>
+            <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border max-w-md mx-auto">
+              <h4 className="font-medium text-blue-900 mb-3">What you'll get:</h4>
+              <ul className="text-sm text-blue-800 space-y-2 text-left">
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Professional performance assessment
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Risk analysis and drawdown evaluation
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Specific improvement recommendations
+                </li>
+                <li className="flex items-center gap-2">
+                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  Market condition suitability analysis
+                </li>
+              </ul>
+            </div>
           </div>
         </CardContent>
       </Card>
@@ -73,48 +105,60 @@ export default function BacktestAnalyst({
   }
 
   return (
-    <Card className="w-full">
-      <CardHeader>
-        <CardTitle className="flex items-center gap-2">
-          <Brain className="h-5 w-5 text-purple-500" />
-          AI Backtest Analyst
-          <Badge variant="secondary" className="ml-auto">
+    <Card className="w-full max-w-4xl mx-auto">
+      <CardHeader className="bg-gradient-to-r from-purple-50 to-indigo-50 border-b">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="p-2 bg-purple-100 rounded-lg">
+              <Brain className="h-6 w-6 text-purple-600" />
+            </div>
+            <div>
+              <CardTitle className="text-2xl font-bold text-purple-900">
+                AI Backtest Analyst
+              </CardTitle>
+              <CardDescription className="text-purple-700 mt-1">
+                Get AI-powered insights and recommendations based on your backtest results.
+              </CardDescription>
+            </div>
+          </div>
+          <Badge variant="secondary" className="bg-purple-100 text-purple-800 border-purple-200">
+            <Zap className="h-3 w-3 mr-1" />
             Powered by Gemini AI
           </Badge>
-        </CardTitle>
-        <CardDescription>
-          Get AI-powered insights and recommendations based on your backtest results.
-        </CardDescription>
+        </div>
       </CardHeader>
-      <CardContent className="space-y-4">
+      <CardContent className="space-y-6">
         {hasResults && (
-          <div className="bg-gray-50 p-4 rounded-lg">
-            <h4 className="font-medium mb-2">Backtest Summary</h4>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 text-sm">
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border">
+            <div className="flex items-center gap-2 mb-4">
+              <BarChart3 className="h-4 w-4 text-blue-600" />
+              <h4 className="font-semibold text-blue-900">Backtest Summary</h4>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
               {backtestResults.totalTrades && (
-                <div>
-                  <span className="text-gray-600">Total Trades:</span>
-                  <div className="font-medium">{backtestResults.totalTrades}</div>
+                <div className="bg-white p-3 rounded-lg border border-blue-200">
+                  <div className="text-xs text-blue-600 mb-1">Total Trades</div>
+                  <div className="font-bold text-blue-900 text-lg">{backtestResults.totalTrades}</div>
                 </div>
               )}
               {backtestResults.winRate !== undefined && (
-                <div>
-                  <span className="text-gray-600">Win Rate:</span>
-                  <div className="font-medium">{(backtestResults.winRate * 100).toFixed(1)}%</div>
+                <div className="bg-white p-3 rounded-lg border border-blue-200">
+                  <div className="text-xs text-blue-600 mb-1">Win Rate</div>
+                  <div className="font-bold text-blue-900 text-lg">{(backtestResults.winRate * 100).toFixed(1)}%</div>
                 </div>
               )}
               {backtestResults.totalReturn !== undefined && (
-                <div>
-                  <span className="text-gray-600">Total Return:</span>
-                  <div className={`font-medium ${backtestResults.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                <div className="bg-white p-3 rounded-lg border border-blue-200">
+                  <div className="text-xs text-blue-600 mb-1">Total Return</div>
+                  <div className={`font-bold text-lg ${backtestResults.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
                     {(backtestResults.totalReturn * 100).toFixed(2)}%
                   </div>
                 </div>
               )}
               {backtestResults.maxDrawdown !== undefined && (
-                <div>
-                  <span className="text-gray-600">Max Drawdown:</span>
-                  <div className="font-medium text-red-600">
+                <div className="bg-white p-3 rounded-lg border border-blue-200">
+                  <div className="text-xs text-blue-600 mb-1">Max Drawdown</div>
+                  <div className="font-bold text-red-600 text-lg">
                     {(backtestResults.maxDrawdown * 100).toFixed(2)}%
                   </div>
                 </div>
@@ -124,20 +168,35 @@ export default function BacktestAnalyst({
         )}
 
         {!showAnalysis && !loading && (
-          <Button
-            onClick={handleAnalyze}
-            disabled={!hasResults || loading}
-            className="w-full flex items-center gap-2"
-          >
-            <Brain className="h-4 w-4" />
-            Analyze with Gemini AI
-          </Button>
+          <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-green-600" />
+                <span className="font-medium text-green-900">Ready for AI Analysis</span>
+              </div>
+              <Button
+                onClick={handleAnalyze}
+                disabled={!hasResults || loading}
+                className="flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white"
+              >
+                <Brain className="h-4 w-4" />
+                Analyze with Gemini AI
+              </Button>
+            </div>
+          </div>
         )}
 
         {loading && (
-          <div className="flex items-center justify-center py-8">
-            <Loader2 className="h-6 w-6 animate-spin mr-2" />
-            <span>AI is analyzing your backtest results...</span>
+          <div className="bg-gradient-to-r from-purple-50 to-indigo-50 p-6 rounded-lg border">
+            <div className="flex items-center justify-center">
+              <div className="flex items-center gap-3">
+                <Loader2 className="h-6 w-6 animate-spin text-purple-600" />
+                <div>
+                  <div className="font-medium text-purple-900">AI is analyzing your backtest results...</div>
+                  <div className="text-sm text-purple-700">This may take a few moments</div>
+                </div>
+              </div>
+            </div>
           </div>
         )}
 
@@ -151,47 +210,152 @@ export default function BacktestAnalyst({
         )}
 
         {data && showAnalysis && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h3 className="text-lg font-semibold flex items-center gap-2">
-                <TrendingUp className="h-5 w-5 text-purple-500" />
-                AI Analysis & Recommendations
-              </h3>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={handleReset}
-                disabled={loading}
-              >
-                New Analysis
-              </Button>
-            </div>
-
-            <div className="bg-white border rounded-lg p-4">
-              <div className="prose prose-sm max-w-none">
-                <div className="whitespace-pre-wrap text-gray-800">
-                  {data.summary}
+          <div className="space-y-6">
+            {/* Results Header */}
+            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3">
+                  <div className="p-2 bg-green-100 rounded-lg">
+                    <Eye className="h-5 w-5 text-green-600" />
+                  </div>
+                  <div>
+                    <h3 className="text-xl font-bold text-green-900">AI Analysis & Recommendations</h3>
+                    <p className="text-sm text-green-700">Professional performance analysis by Gemini AI</p>
+                  </div>
+                </div>
+                <div className="flex items-center gap-2">
+                  <Badge variant="default" className="bg-green-100 text-green-800">
+                    <CheckCircle className="h-3 w-3 mr-1" />
+                    Analysis Complete
+                  </Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={handleReset}
+                    disabled={loading}
+                    className="border-green-200 hover:border-green-400 hover:bg-green-50"
+                  >
+                    New Analysis
+                  </Button>
                 </div>
               </div>
             </div>
 
-            <div className="text-xs text-gray-500 flex items-center gap-1">
-              <Brain className="h-3 w-3" />
-              Analysis by {data.powered_by}
+            {/* Structured Analysis Display */}
+            <div className="bg-gradient-to-r from-gray-50 to-slate-50 p-4 rounded-lg border">
+              <div className="flex items-center gap-2 mb-4">
+                <Settings className="h-4 w-4 text-gray-600" />
+                <h4 className="font-semibold text-gray-900">Performance Analysis</h4>
+              </div>
+              <div className="bg-white p-4 rounded-lg border border-gray-200">
+                <div className="prose prose-sm max-w-none">
+                  <div className="whitespace-pre-wrap text-gray-800 leading-relaxed">
+                    {data.summary}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            {/* Analysis Categories */}
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border">
+                <div className="flex items-center gap-2 mb-3">
+                  <Target className="h-4 w-4 text-blue-600" />
+                  <h4 className="font-semibold text-blue-900">Key Insights</h4>
+                </div>
+                <ul className="text-sm text-blue-800 space-y-2">
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    Performance assessment
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    Risk evaluation
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    Market suitability
+                  </li>
+                </ul>
+              </div>
+              <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border">
+                <div className="flex items-center gap-2 mb-3">
+                  <Shield className="h-4 w-4 text-green-600" />
+                  <h4 className="font-semibold text-green-900">Recommendations</h4>
+                </div>
+                <ul className="text-sm text-green-800 space-y-2">
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    Improvement suggestions
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    Risk management
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-green-500 rounded-full"></div>
+                    Optimization tips
+                  </li>
+                </ul>
+              </div>
+            </div>
+
+            {/* Footer */}
+            <div className="flex items-center justify-between text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
+              <div className="flex items-center gap-1">
+                <Brain className="h-3 w-3" />
+                Analysis by {data.powered_by}
+              </div>
+              <div className="flex items-center gap-4">
+                <span>Professional Analysis</span>
+                <Badge variant="outline" className="text-xs">
+                  AI-Powered
+                </Badge>
+              </div>
             </div>
           </div>
         )}
 
         {!data && !loading && (
-          <div className="bg-blue-50 p-4 rounded-lg">
-            <h4 className="font-medium text-blue-900 mb-2">What you'll get:</h4>
-            <ul className="text-sm text-blue-800 space-y-1">
-              <li>• Performance assessment and key insights</li>
-              <li>• Risk analysis and drawdown evaluation</li>
-              <li>• Specific improvement recommendations</li>
-              <li>• Market condition suitability analysis</li>
-              <li>• Actionable next steps for optimization</li>
-            </ul>
+          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border">
+            <div className="flex items-center gap-2 mb-4">
+              <Database className="h-4 w-4 text-blue-600" />
+              <h4 className="font-semibold text-blue-900">What You'll Get</h4>
+            </div>
+            <div className="grid md:grid-cols-2 gap-4">
+              <div className="bg-white p-3 rounded-lg border border-blue-200">
+                <ul className="text-sm text-blue-800 space-y-2">
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    Performance assessment and key insights
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    Risk analysis and drawdown evaluation
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    Specific improvement recommendations
+                  </li>
+                </ul>
+              </div>
+              <div className="bg-white p-3 rounded-lg border border-blue-200">
+                <ul className="text-sm text-blue-800 space-y-2">
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    Market condition suitability analysis
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    Actionable next steps for optimization
+                  </li>
+                  <li className="flex items-center gap-2">
+                    <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                    Professional trading consultant insights
+                  </li>
+                </ul>
+              </div>
+            </div>
           </div>
         )}
       </CardContent>
