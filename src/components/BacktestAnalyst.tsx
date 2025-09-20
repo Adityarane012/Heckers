@@ -18,13 +18,37 @@ export default function BacktestAnalyst({
   autoAnalyze = false 
 }: BacktestAnalystProps) {
   const [showAnalysis, setShowAnalysis] = useState(false);
+  const [useSampleData, setUseSampleData] = useState(false);
   const { data, loading, error, analyzeBacktest, reset } = useBacktestAnalyst();
 
+  // Sample backtest data for demonstration
+  const sampleBacktestData = {
+    totalTrades: 127,
+    winRate: 0.68,
+    totalReturn: 0.24,
+    maxDrawdown: 0.08,
+    profitFactor: 2.1,
+    sharpeRatio: 1.6,
+    avgWin: 0.015,
+    avgLoss: -0.008,
+    largestWin: 0.045,
+    largestLoss: -0.032,
+    winStreak: 8,
+    lossStreak: 4,
+    avgTradeDuration: 2.5,
+    strategy: "RSI Mean Reversion",
+    timeframe: "1H",
+    symbol: "EURUSD",
+    period: "2024-01-01 to 2024-06-30"
+  };
+
+  const currentBacktestData = useSampleData ? sampleBacktestData : backtestResults;
+
   const handleAnalyze = async () => {
-    if (!backtestResults || loading) return;
+    if (!currentBacktestData || loading) return;
 
     try {
-      const result = await analyzeBacktest(backtestResults);
+      const result = await analyzeBacktest(currentBacktestData);
       setShowAnalysis(true);
       onAnalyze?.(result.summary);
     } catch (err) {
@@ -39,12 +63,12 @@ export default function BacktestAnalyst({
 
   // Auto-analyze when backtest results are provided and autoAnalyze is true
   React.useEffect(() => {
-    if (autoAnalyze && backtestResults && !data && !loading && !error) {
+    if (autoAnalyze && currentBacktestData && !data && !loading && !error) {
       handleAnalyze();
     }
-  }, [autoAnalyze, backtestResults, data, loading, error]);
+  }, [autoAnalyze, currentBacktestData, data, loading, error]);
 
-  const hasResults = backtestResults && Object.keys(backtestResults).length > 0;
+  const hasResults = currentBacktestData && Object.keys(currentBacktestData).length > 0;
 
   if (!hasResults && !data) {
     return (
@@ -79,7 +103,7 @@ export default function BacktestAnalyst({
             <p className="text-gray-600 mb-4">Complete a backtest to unlock AI-powered performance analysis.</p>
             <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border max-w-md mx-auto">
               <h4 className="font-medium text-blue-900 mb-3">What you'll get:</h4>
-              <ul className="text-sm text-blue-800 space-y-2 text-left">
+              <ul className="text-sm text-blue-800 space-y-2 text-left mb-4">
                 <li className="flex items-center gap-2">
                   <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
                   Professional performance assessment
@@ -97,6 +121,13 @@ export default function BacktestAnalyst({
                   Market condition suitability analysis
                 </li>
               </ul>
+              <Button
+                onClick={() => setUseSampleData(true)}
+                className="w-full bg-blue-600 hover:bg-blue-700 text-white"
+              >
+                <BarChart3 className="h-4 w-4 mr-2" />
+                Try with Sample Data
+              </Button>
             </div>
           </div>
         </CardContent>
@@ -130,40 +161,109 @@ export default function BacktestAnalyst({
       <CardContent className="space-y-6">
         {hasResults && (
           <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border">
-            <div className="flex items-center gap-2 mb-4">
-              <BarChart3 className="h-4 w-4 text-blue-600" />
-              <h4 className="font-semibold text-blue-900">Backtest Summary</h4>
+            <div className="flex items-center justify-between mb-4">
+              <div className="flex items-center gap-2">
+                <BarChart3 className="h-4 w-4 text-blue-600" />
+                <h4 className="font-semibold text-blue-900">Backtest Summary</h4>
+              </div>
+              {useSampleData && (
+                <div className="flex items-center gap-2">
+                  <Badge variant="outline" className="bg-amber-100 text-amber-800 border-amber-200">
+                    Sample Data
+                  </Badge>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => {
+                      setUseSampleData(false);
+                      setShowAnalysis(false);
+                      reset();
+                    }}
+                    className="text-xs border-amber-200 hover:border-amber-400 hover:bg-amber-50"
+                  >
+                    Use Real Data
+                  </Button>
+                </div>
+              )}
             </div>
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              {backtestResults.totalTrades && (
+              {currentBacktestData.totalTrades && (
                 <div className="bg-white p-3 rounded-lg border border-blue-200">
                   <div className="text-xs text-blue-600 mb-1">Total Trades</div>
-                  <div className="font-bold text-blue-900 text-lg">{backtestResults.totalTrades}</div>
+                  <div className="font-bold text-blue-900 text-lg">{currentBacktestData.totalTrades}</div>
                 </div>
               )}
-              {backtestResults.winRate !== undefined && (
+              {currentBacktestData.winRate !== undefined && (
                 <div className="bg-white p-3 rounded-lg border border-blue-200">
                   <div className="text-xs text-blue-600 mb-1">Win Rate</div>
-                  <div className="font-bold text-blue-900 text-lg">{(backtestResults.winRate * 100).toFixed(1)}%</div>
+                  <div className="font-bold text-blue-900 text-lg">{(currentBacktestData.winRate * 100).toFixed(1)}%</div>
                 </div>
               )}
-              {backtestResults.totalReturn !== undefined && (
+              {currentBacktestData.totalReturn !== undefined && (
                 <div className="bg-white p-3 rounded-lg border border-blue-200">
                   <div className="text-xs text-blue-600 mb-1">Total Return</div>
-                  <div className={`font-bold text-lg ${backtestResults.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
-                    {(backtestResults.totalReturn * 100).toFixed(2)}%
+                  <div className={`font-bold text-lg ${currentBacktestData.totalReturn >= 0 ? 'text-green-600' : 'text-red-600'}`}>
+                    {(currentBacktestData.totalReturn * 100).toFixed(2)}%
                   </div>
                 </div>
               )}
-              {backtestResults.maxDrawdown !== undefined && (
+              {currentBacktestData.maxDrawdown !== undefined && (
                 <div className="bg-white p-3 rounded-lg border border-blue-200">
                   <div className="text-xs text-blue-600 mb-1">Max Drawdown</div>
                   <div className="font-bold text-red-600 text-lg">
-                    {(backtestResults.maxDrawdown * 100).toFixed(2)}%
+                    {(currentBacktestData.maxDrawdown * 100).toFixed(2)}%
                   </div>
                 </div>
               )}
             </div>
+            
+            {/* Additional Metrics Row */}
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+              {currentBacktestData.profitFactor && (
+                <div className="bg-white p-3 rounded-lg border border-blue-200">
+                  <div className="text-xs text-blue-600 mb-1">Profit Factor</div>
+                  <div className="font-bold text-blue-900 text-lg">{currentBacktestData.profitFactor}</div>
+                </div>
+              )}
+              {currentBacktestData.sharpeRatio && (
+                <div className="bg-white p-3 rounded-lg border border-blue-200">
+                  <div className="text-xs text-blue-600 mb-1">Sharpe Ratio</div>
+                  <div className="font-bold text-blue-900 text-lg">{currentBacktestData.sharpeRatio}</div>
+                </div>
+              )}
+              {currentBacktestData.avgWin && (
+                <div className="bg-white p-3 rounded-lg border border-blue-200">
+                  <div className="text-xs text-blue-600 mb-1">Avg Win</div>
+                  <div className="font-bold text-green-600 text-lg">{(currentBacktestData.avgWin * 100).toFixed(2)}%</div>
+                </div>
+              )}
+              {currentBacktestData.avgLoss && (
+                <div className="bg-white p-3 rounded-lg border border-blue-200">
+                  <div className="text-xs text-blue-600 mb-1">Avg Loss</div>
+                  <div className="font-bold text-red-600 text-lg">{(currentBacktestData.avgLoss * 100).toFixed(2)}%</div>
+                </div>
+              )}
+            </div>
+
+            {/* Strategy Info */}
+            {currentBacktestData.strategy && (
+              <div className="mt-4 p-3 bg-white rounded-lg border border-blue-200">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4 text-sm">
+                  <div>
+                    <span className="text-blue-600 font-medium">Strategy:</span>
+                    <div className="text-blue-900">{currentBacktestData.strategy}</div>
+                  </div>
+                  <div>
+                    <span className="text-blue-600 font-medium">Symbol:</span>
+                    <div className="text-blue-900">{currentBacktestData.symbol}</div>
+                  </div>
+                  <div>
+                    <span className="text-blue-600 font-medium">Period:</span>
+                    <div className="text-blue-900">{currentBacktestData.period}</div>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
 
