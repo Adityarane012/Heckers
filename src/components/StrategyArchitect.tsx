@@ -131,11 +131,11 @@ export default function StrategyArchitect() {
                   type="button"
                   onClick={() => setInput(prompt)}
                   disabled={loading}
-                  className="text-sm h-auto p-4 text-left justify-start hover:bg-blue-50 hover:border-blue-200 transition-colors min-h-[60px]"
+                  className="text-sm h-auto p-4 text-left justify-start hover:bg-blue-50 hover:border-blue-200 transition-colors min-h-[60px] w-full"
                 >
-                  <div className="flex items-start gap-3">
+                  <div className="flex items-start gap-3 w-full">
                     <div className="w-3 h-3 bg-blue-500 rounded-full mt-1 flex-shrink-0"></div>
-                    <span className="leading-relaxed">{prompt}</span>
+                    <span className="leading-relaxed break-words flex-1">{prompt}</span>
                   </div>
                 </Button>
               ))}
