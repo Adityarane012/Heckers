@@ -127,8 +127,8 @@ export function StrategyBuilder() {
             <Bot className="w-4 h-4 mr-2 text-primary" />
             <span className="text-sm font-medium text-primary">Powered by Google Gemini AI</span>
           </div>
-          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
-            AI-Powered Strategy Development
+          <h2 className="text-3xl md:text-4xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
+            AI STRATEGY DEVELOPMENT
           </h2>
           <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
             Build, analyze, and optimize trading strategies using advanced AI agents. 

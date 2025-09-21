@@ -117,11 +117,11 @@ export function BacktestingSection() {
   };
 
   return (
-    <section id="backtesting" className="py-20">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Validate Your Strategy</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+    <section id="backtesting" className="py-10">
+      <div className="container mx-auto px-10">
+        <div className="text-center mb-16">
+          <h2 className="text-4xl font-bold mb-16">Validate Your Strategy</h2>
+          <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
             Test your trading algorithms against historical data to understand performance and risk
           </p>
         </div>
