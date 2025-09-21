@@ -1,3 +1,4 @@
+//This is a components.json file for a React project.
 {
   "$schema": "https://ui.shadcn.com/schema.json",
   "style": "default",

@@ -4,3 +4,4 @@ export default {
     autoprefixer: {},
   },
 };
+//This is a postcss.config.js file for a React project.

@@ -28,3 +28,4 @@
   },
   "include": ["src"]
 }
+//This is a tsconfig.app.json file for a React project.

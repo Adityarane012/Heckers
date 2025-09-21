@@ -98,7 +98,7 @@ Frontend runs on: http://localhost:8081
 
 ## 📊 API Endpoints
 
-### Main Backend (Node.js)
+### Main Backend (Node.js)d
 - `GET /health` - Health check
 - `POST /api/backtest` - Run backtest
 - `GET /api/strategies` - List strategies

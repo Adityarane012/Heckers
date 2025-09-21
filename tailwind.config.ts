@@ -134,3 +134,4 @@ export default {
   },
   plugins: [require("tailwindcss-animate")],
 } satisfies Config;
+//This is a tailwind.config.ts file for a React project.

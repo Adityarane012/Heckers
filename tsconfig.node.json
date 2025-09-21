@@ -20,3 +20,4 @@
   },
   "include": ["vite.config.ts"]
 }
+//This is a tsconfig.node.json file for a React project.
