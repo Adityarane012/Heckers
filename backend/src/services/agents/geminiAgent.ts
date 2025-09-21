@@ -1,13 +1,17 @@
 import axios from 'axios';
 
+// Enhanced AI agent service for AlgoCode trading platform
+// This service provides institutional-grade AI analysis for trading strategies
 const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent';
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 
+// Error interface for handling Gemini API specific errors
 export interface GeminiError extends Error {
   status?: number;
   code?: string;
 }
 
+// Custom error class for Gemini API errors with enhanced error handling
 export class GeminiApiError extends Error implements GeminiError {
   status?: number;
   code?: string;
@@ -235,19 +239,57 @@ Respond with ONLY a valid JSON object in this format:
 }
 
 export async function backtestAnalystAgent(backtestStats: any): Promise<string> {
-  const prompt = `You are a professional trading performance analyst for AlgoCode. 
+  const prompt = `You are an elite quantitative analyst and risk management expert for AlgoCode, specializing in institutional-grade trading strategy analysis.
 
-Analyze the following backtest results and provide a comprehensive but concise summary. Focus on:
-1. Overall performance assessment (profitable/unprofitable)
-2. Key metrics interpretation (win rate, profit factor, drawdown)
-3. Risk analysis and potential concerns
-4. Specific actionable improvement suggestions
-5. Market conditions where this strategy might excel or struggle
+Analyze the following backtest results with comprehensive depth and provide actionable insights:
+
+PERFORMANCE ANALYSIS:
+1. Overall Strategy Assessment
+   - Profitability analysis with statistical significance evaluation
+   - Risk-adjusted returns assessment (Sharpe, Sortino, Calmar ratios)
+   - Consistency of returns over time and market conditions
+   - Benchmark comparison and alpha generation analysis
+
+2. Risk Management Evaluation
+   - Drawdown analysis (maximum, average, recovery time, frequency)
+   - Value at Risk (VaR) and Expected Shortfall assessment
+   - Tail risk analysis and extreme event impact
+   - Correlation analysis with market indices and volatility
+
+3. Trade Quality Analysis
+   - Win/Loss distribution and statistical significance
+   - Trade duration optimization and timing effectiveness
+   - Entry/exit quality and slippage impact analysis
+   - Position sizing adequacy and risk per trade assessment
+
+4. Market Regime Performance
+   - Bull/Bear/Sideways market performance breakdown
+   - Volatility regime analysis (high/low volatility periods)
+   - Sector/asset class correlation and diversification benefits
+   - Seasonal performance patterns and cyclical behavior
+
+5. Strategy Optimization Recommendations
+   - Parameter sensitivity analysis and robustness testing
+   - Overfitting risk assessment and out-of-sample validation
+   - Walk-forward analysis suggestions and rolling optimization
+   - Monte Carlo simulation recommendations for stress testing
+
+6. Implementation Considerations
+   - Transaction cost impact and realistic execution analysis
+   - Slippage analysis and market impact assessment
+   - Market capacity constraints and scalability limits
+   - Real-world execution challenges and practical limitations
+
+7. Advanced Risk Metrics
+   - Maximum Adverse Excursion (MAE) and Maximum Favorable Excursion (MFE)
+   - Consecutive loss analysis and psychological impact
+   - Risk of ruin calculations and capital preservation
+   - Kelly Criterion analysis for optimal position sizing
 
 Backtest Statistics:
 ${JSON.stringify(backtestStats, null, 2)}
 
-Provide your analysis in a clear, structured format that helps traders understand their strategy's performance and how to improve it. Be direct and actionable.
+Provide institutional-quality analysis with specific, actionable recommendations. Focus on risk management, practical implementation, and long-term sustainability. Be direct, quantitative, and evidence-based in your recommendations.
 
 IMPORTANT: Do not use markdown formatting like #, *, **, or other markdown symbols. Use plain text with clear headings and bullet points using simple text formatting.`;
 
@@ -296,51 +338,51 @@ export async function ohlcvAnalystAgent(ohlcvData: any[], symbol?: string, analy
 
 Analyze the following market data and provide comprehensive insights. Focus on:
 
-**Data Overview:**
+Data Overview:
 - Symbol: ${symbol || 'Unknown'}
 - Data Points: ${ohlcvData.length} periods
 - Date Range: ${ohlcvData.length > 0 ? new Date(ohlcvData[0].timestamp).toLocaleDateString() : 'N/A'} to ${ohlcvData.length > 0 ? new Date(ohlcvData[ohlcvData.length - 1].timestamp).toLocaleDateString() : 'N/A'}
 
-**Analysis Type:** ${analysisType || 'Comprehensive Market Analysis'}
+Analysis Type: ${analysisType || 'Comprehensive Market Analysis'}
 
-**Please provide:**
+Please provide:
 
-1. **Price Action Analysis:**
+1. Price Action Analysis:
    - Trend identification (uptrend, downtrend, sideways)
    - Support and resistance levels
    - Volatility assessment
    - Price momentum indicators
 
-2. **Volume Analysis:**
+2. Volume Analysis:
    - Volume trends and patterns
    - Volume-price relationship
    - Unusual volume spikes
    - Average volume vs current volume
 
-3. **Technical Patterns:**
+3. Technical Patterns:
    - Chart patterns (if any)
    - Candlestick patterns
    - Breakout/breakdown opportunities
    - Reversal signals
 
-4. **Risk Assessment:**
+4. Risk Assessment:
    - Price volatility metrics
    - Drawdown analysis
    - Risk-reward ratios
    - Market regime identification
 
-5. **Trading Opportunities:**
+5. Trading Opportunities:
    - Entry/exit signals
    - Position sizing recommendations
    - Stop-loss levels
    - Take-profit targets
 
-6. **Market Context:**
+6. Market Context:
    - Overall market sentiment
    - Sector/industry considerations
    - Macro factors to watch
 
-**OHLCV Data:**
+OHLCV Data:
 ${JSON.stringify(ohlcvData.slice(-50), null, 2)} ${ohlcvData.length > 50 ? `\n\n[Showing last 50 data points out of ${ohlcvData.length} total]` : ''}
 
 Provide actionable insights that help traders make informed decisions. Be specific with numbers, percentages, and clear recommendations.`;

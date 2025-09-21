@@ -1,9 +1,13 @@
+// Main strategy builder component with integrated AI agents
 import { useEffect, useState } from "react";
 import { saveStrategy, listStrategies, runBacktestApi } from "@/lib/api";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
+// Tabbed interface for organizing multiple AI agent features
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+// Comprehensive icon set for strategy building and AI agent features
 import { 
   Plus, 
   Play, 
@@ -13,9 +17,19 @@ import {
   BarChart, 
   Zap,
   Target,
-  Shield
+  Shield,
+  Sparkles,
+  Brain,
+  GraduationCap,
+  BarChart3,
+  Bot
 } from "lucide-react";
+import StrategyArchitect from './StrategyArchitect';
+import BacktestAnalyst from './BacktestAnalyst';
+import TradeCoach from './TradeCoach';
+import OHLCVAnalyst from './OHLCVAnalyst';
 
+// Interface for strategy building blocks with drag-and-drop functionality
 interface StrategyBlock {
   id: string;
   type: "indicator" | "condition" | "action";
@@ -25,6 +39,7 @@ interface StrategyBlock {
   color: string;
 }
 
+// Predefined strategy building blocks for visual strategy creation
 const availableBlocks: StrategyBlock[] = [
   {
     id: "sma",
@@ -48,32 +63,31 @@ const availableBlocks: StrategyBlock[] = [
     title: "MACD",
     description: "Trend + momentum",
     icon: Zap,
-    color: "bg-secondary"
+    color: "bg-success"
+  },
+  {
+    id: "volume",
+    type: "indicator",
+    title: "Volume",
+    description: "Trading volume analysis",
+    icon: BarChart3,
+    color: "bg-warning"
   },
   {
     id: "breakout",
     type: "condition",
     title: "Breakout",
-    description: "Price breaks range",
-    icon: Target,
-    color: "bg-info"
+    description: "Price breakout detection",
+    icon: TrendingUp,
+    color: "bg-primary"
   },
   {
     id: "momentum",
-    type: "indicator",
-    title: "Momentum (ROC)",
-    description: "Rate of Change",
-    icon: TrendingUp,
-    color: "bg-muted"
-  },
-  {
-
-    id: "price-cross",
     type: "condition",
-    title: "Price Crossover", 
-    description: "When price crosses indicator",
-    icon: Target,
-    color: "bg-info"
+    title: "Momentum",
+    description: "Price momentum signals",
+    icon: Zap,
+    color: "bg-accent"
   },
   {
     id: "buy-signal",
@@ -84,7 +98,7 @@ const availableBlocks: StrategyBlock[] = [
     color: "bg-success"
   },
   {
-    id: "sell-signal", 
+    id: "sell-signal",
     type: "action",
     title: "Sell Signal",
     description: "Execute sell order", 
@@ -102,6 +116,154 @@ const availableBlocks: StrategyBlock[] = [
 ];
 
 export function StrategyBuilder() {
+  const [activeTab, setActiveTab] = useState("visual-builder");
+
+  return (
+    <section id="strategies" className="py-20 bg-muted/20">
+      <div className="container mx-auto px-6">
+        {/* Header */}
+        <div className="text-center mb-12">
+          <div className="inline-flex items-center px-4 py-2 rounded-full bg-primary/20 border border-primary/30 mb-6">
+            <Bot className="w-4 h-4 mr-2 text-primary" />
+            <span className="text-sm font-medium text-primary">Powered by Google Gemini AI</span>
+          </div>
+          <h2 className="text-4xl md:text-5xl font-bold mb-4 bg-gradient-primary bg-clip-text text-transparent">
+            AI-Powered Strategy Development
+          </h2>
+          <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+            Build, analyze, and optimize trading strategies using advanced AI agents. 
+            From natural language descriptions to comprehensive market analysis.
+          </p>
+        </div>
+
+        {/* AI Agents Features Grid */}
+        <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+          <div className="card-trading p-6 text-center">
+            <div className="w-12 h-12 bg-primary rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Sparkles className="w-6 h-6 text-primary-foreground" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Strategy Architect</h3>
+            <p className="text-muted-foreground">Convert natural language trading ideas into executable strategy configurations</p>
+          </div>
+
+          <div className="card-trading p-6 text-center">
+            <div className="w-12 h-12 bg-green-600 rounded-lg flex items-center justify-center mx-auto mb-4">
+              <BarChart3 className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">OHLCV Analyst</h3>
+            <p className="text-muted-foreground">AI-powered analysis of market data with price action and volume insights</p>
+          </div>
+
+          <div className="card-trading p-6 text-center">
+            <div className="w-12 h-12 bg-accent rounded-lg flex items-center justify-center mx-auto mb-4">
+              <Brain className="w-6 h-6 text-accent-foreground" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Backtest Analyst</h3>
+            <p className="text-muted-foreground">AI-powered analysis of backtest results with actionable insights</p>
+          </div>
+
+          <div className="card-trading p-6 text-center">
+            <div className="w-12 h-12 bg-success rounded-lg flex items-center justify-center mx-auto mb-4">
+              <GraduationCap className="w-6 h-6 text-white" />
+            </div>
+            <h3 className="text-xl font-semibold mb-2">Trade Coach</h3>
+            <p className="text-muted-foreground">Personalized coaching based on your trading patterns and behavior</p>
+          </div>
+        </div>
+
+        {/* Tabs Interface */}
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+          <TabsList className="grid w-full grid-cols-5 mb-8">
+            <TabsTrigger value="visual-builder" className="flex items-center gap-2">
+              <Target className="w-4 h-4" />
+              Visual Builder
+            </TabsTrigger>
+            <TabsTrigger value="strategy-architect" className="flex items-center gap-2">
+              <Sparkles className="w-4 h-4" />
+              Strategy Architect
+            </TabsTrigger>
+            <TabsTrigger value="ohlcv-analyst" className="flex items-center gap-2">
+              <BarChart3 className="w-4 h-4" />
+              OHLCV Analyst
+            </TabsTrigger>
+            <TabsTrigger value="backtest-analyst" className="flex items-center gap-2">
+              <Brain className="w-4 h-4" />
+              Backtest Analyst
+            </TabsTrigger>
+            <TabsTrigger value="trade-coach" className="flex items-center gap-2">
+              <GraduationCap className="w-4 h-4" />
+              Trade Coach
+            </TabsTrigger>
+          </TabsList>
+
+          {/* Visual Builder Tab */}
+          <TabsContent value="visual-builder">
+            <VisualStrategyBuilder />
+          </TabsContent>
+
+          {/* Strategy Architect Tab */}
+          <TabsContent value="strategy-architect">
+            <div className="space-y-8">
+              <div className="text-center">
+                <h3 className="text-2xl font-bold mb-4">Natural Language to Trading Strategy</h3>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  Describe your trading idea in plain English and watch our AI transform it into a structured, 
+                  executable strategy configuration with parameters and rationale.
+                </p>
+              </div>
+              <StrategyArchitect />
+            </div>
+          </TabsContent>
+
+          {/* OHLCV Analyst Tab */}
+          <TabsContent value="ohlcv-analyst">
+            <div className="space-y-8">
+              <div className="text-center">
+                <h3 className="text-2xl font-bold mb-4">AI-Powered Market Data Analysis</h3>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  Upload your OHLCV market data for comprehensive AI analysis including price action, 
+                  volume patterns, technical indicators, and trading opportunities.
+                </p>
+              </div>
+              <OHLCVAnalyst />
+            </div>
+          </TabsContent>
+
+          {/* Backtest Analyst Tab */}
+          <TabsContent value="backtest-analyst">
+            <div className="space-y-8">
+              <div className="text-center">
+                <h3 className="text-2xl font-bold mb-4">AI-Powered Performance Analysis</h3>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  Upload your backtest results and get comprehensive AI analysis with risk assessment, 
+                  performance insights, and specific recommendations for improvement.
+                </p>
+              </div>
+              <BacktestAnalyst />
+            </div>
+          </TabsContent>
+
+          {/* Trade Coach Tab */}
+          <TabsContent value="trade-coach">
+            <div className="space-y-8">
+              <div className="text-center">
+                <h3 className="text-2xl font-bold mb-4">Your Personal Trading Coach</h3>
+                <p className="text-muted-foreground max-w-2xl mx-auto">
+                  Receive personalized coaching based on your actual trading history. 
+                  Identify patterns, improve discipline, and accelerate your trading growth with AI-powered insights.
+                </p>
+              </div>
+              <TradeCoach />
+            </div>
+          </TabsContent>
+        </Tabs>
+      </div>
+    </section>
+  );
+}
+
+// Visual Strategy Builder Component (original functionality)
+function VisualStrategyBuilder() {
   const [activeBlocks, setActiveBlocks] = useState<StrategyBlock[]>([]);
   const [draggedBlock, setDraggedBlock] = useState<StrategyBlock | null>(null);
   const [savedCount, setSavedCount] = useState(0);
@@ -146,7 +308,7 @@ export function StrategyBuilder() {
       setKind('macd');
       return;
     }
-    if (ids.has('breakout') && ids.has('sell-signal') && ids.has('buy-signal')) {
+    if (ids.has('breakout') && ids.has('buy-signal') && ids.has('sell-signal')) {
       setKind('breakout');
       return;
     }
@@ -157,243 +319,200 @@ export function StrategyBuilder() {
     setKind(null);
   };
 
-  const updateParam = (key: string, value: number) => setParams(prev => ({ ...prev, [key]: value }));
-
   const runTest = async () => {
     if (!kind) return;
-    setTestMetrics(null);
-    const payload = {
-      symbol: 'AAPL',
-      start: '2020-01-01',
-      end: '2024-01-01',
-      strategy: { kind, params }
-    } as const;
+    
     try {
-      const res = await runBacktestApi(payload as any);
+      const result = await runBacktestApi({
+        strategy: { kind, params },
+        symbol: 'AAPL',
+        start: '2023-01-01',
+        end: '2024-01-01'
+      });
+      
       setTestMetrics({
-        totalReturnPct: res.metrics?.totalReturnPct,
-        sharpe: res.metrics?.sharpe,
-        maxDrawdownPct: res.metrics?.maxDrawdownPct,
-        winRatePct: res.metrics?.winRatePct,
-        profitFactor: res.metrics?.profitFactor
+        totalReturnPct: result.totalReturnPct,
+        sharpe: result.sharpe,
+        maxDrawdownPct: result.maxDrawdownPct,
+        winRatePct: result.winRatePct,
+        profitFactor: result.profitFactor
       });
     } catch (e) {
-      setTestMetrics({ totalReturnPct: 0, sharpe: 0, maxDrawdownPct: 0, winRatePct: 0, profitFactor: 0 });
       // optionally console.error(e)
     }
   };
 
   return (
-    <section id="strategies" className="py-20 bg-muted/20">
-      <div className="container mx-auto px-6">
-        <div className="text-center mb-12">
-          <h2 className="text-4xl font-bold mb-4">Build Your Strategy</h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-            Drag and drop components to create sophisticated trading algorithms without any coding
-          </p>
-        </div>
-
-        <div className="grid lg:grid-cols-3 gap-8">
-          {/* Component Library */}
-          <div className="lg:col-span-1">
-            <Card className="card-trading">
-              <CardHeader>
-                <CardTitle className="flex items-center gap-2">
-                  <Plus className="w-5 h-5" />
-                  Strategy Components
-                </CardTitle>
-                <CardDescription>
-                  Drag components to build your strategy
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-3">
-                {availableBlocks.map((block) => (
-                  <div
-                    key={block.id}
-                    draggable
-                    onDragStart={() => handleDragStart(block)}
-                    className="p-3 rounded-lg border border-border bg-card hover:bg-accent cursor-grab active:cursor-grabbing transition-all duration-200 hover:shadow-primary"
-                  >
-                    <div className="flex items-center gap-3">
-                      <div className={`w-8 h-8 ${block.color} rounded-lg flex items-center justify-center`}>
-                        <block.icon className="w-4 h-4 text-white" />
-                      </div>
-                      <div className="flex-1">
-                        <div className="font-medium text-sm">{block.title}</div>
-                        <div className="text-xs text-muted-foreground">{block.description}</div>
-                      </div>
-                      <Badge variant="outline" className="text-xs">
-                        {block.type}
-                      </Badge>
-                    </div>
+    <div className="grid lg:grid-cols-3 gap-8">
+      {/* Component Library */}
+      <div className="lg:col-span-1">
+        <Card className="card-trading">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Plus className="w-5 h-5" />
+              Strategy Components
+            </CardTitle>
+            <CardDescription>
+              Drag components to build your strategy
+            </CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {availableBlocks.map((block) => (
+              <div
+                key={block.id}
+                draggable
+                onDragStart={() => handleDragStart(block)}
+                className={`p-3 rounded-lg border-2 border-dashed cursor-move hover:border-primary/50 transition-colors ${block.color}/10`}
+              >
+                <div className="flex items-center gap-3">
+                  <div className={`p-2 rounded-lg ${block.color}`}>
+                    <block.icon className="w-4 h-4 text-white" />
                   </div>
-                ))}
-              </CardContent>
-            </Card>
-          </div>
-
-          {/* Strategy Canvas */}
-          <div className="lg:col-span-2">
-            <Card className="card-trading">
-              <CardHeader>
-                <div className="flex items-center justify-between">
                   <div>
-                    <CardTitle className="flex items-center gap-2">
-                      <Zap className="w-5 h-5" />
-                      Strategy Canvas
-                    </CardTitle>
-                    <CardDescription>
-                      Your trading strategy blueprint
-                    </CardDescription>
-                  </div>
-                  <div className="flex gap-2">
-                    <Button variant="outline" size="sm" onClick={async () => {
-                      try {
-                        await saveStrategy({
-                          name: `My Strategy ${savedCount + 1}`,
-                          definition: {
-                            kind: kind ?? 'smaCross',
-                            params
-                          }
-                        });
-                        setSavedCount(x => x + 1);
-                      } catch {}
-                    }}>
-                      <Save className="w-4 h-4 mr-2" />
-                      Save
-                    </Button>
-                    <Button variant="trading" size="sm" onClick={runTest} disabled={!kind}>
-                      <Play className="w-4 h-4 mr-2" />
-                      Test Strategy
-                    </Button>
+                    <h4 className="font-medium">{block.title}</h4>
+                    <p className="text-sm text-muted-foreground">{block.description}</p>
                   </div>
                 </div>
-              </CardHeader>
-              <CardContent>
-                <div
-                  className="min-h-96 border-2 border-dashed border-border rounded-lg p-6 bg-background/50"
-                  onDragOver={(e) => e.preventDefault()}
-                  onDrop={handleDrop}
-                >
-                  {activeBlocks.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center">
-                      <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mb-4">
-                        <Plus className="w-8 h-8 text-muted-foreground" />
-                      </div>
-                      <h3 className="text-lg font-semibold mb-2">Start Building Your Strategy</h3>
-                      <p className="text-muted-foreground">
-                        Drag components from the left panel to create your trading algorithm
-                      </p>
-                    </div>
-                  ) : (
-                    <div className="space-y-4">
-                      {activeBlocks.map((block, index) => (
-                        <div
-                          key={`${block.id}-${index}`}
-                          className="p-4 rounded-lg border border-border bg-card shadow-card hover:shadow-primary transition-all duration-200 group"
-                        >
-                          <div className="flex items-center justify-between">
-                            <div className="flex items-center gap-3">
-                              <div className={`w-10 h-10 ${block.color} rounded-lg flex items-center justify-center`}>
-                                <block.icon className="w-5 h-5 text-white" />
-                              </div>
-                              <div>
-                                <div className="font-medium">{block.title}</div>
-                                <div className="text-sm text-muted-foreground">{block.description}</div>
-                              </div>
-                              <Badge variant="outline">
-                                {block.type}
-                              </Badge>
-                            </div>
-                            <Button
-                              variant="ghost"
-                              size="sm"
-                              onClick={() => removeBlock(block.id)}
-                              className="opacity-0 group-hover:opacity-100 transition-opacity"
-                            >
-                              ×
-                            </Button>
-                          </div>
-                        </div>
-                      ))}
-                      {/* Parameters UI */}
-                      {kind === 'smaCross' && (
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="text-xs">Fast</label>
-                            <Input type="number" value={params.fast ?? 10} onChange={e => updateParam('fast', Number(e.target.value))} />
-                          </div>
-                          <div>
-                            <label className="text-xs">Slow</label>
-                            <Input type="number" value={params.slow ?? 30} onChange={e => updateParam('slow', Number(e.target.value))} />
-                          </div>
-                        </div>
-                      )}
-                      {kind === 'rsiReversion' && (
-                        <div className="grid grid-cols-3 gap-3">
-                          <div>
-                            <label className="text-xs">Period</label>
-                            <Input type="number" value={params.period ?? 14} onChange={e => updateParam('period', Number(e.target.value))} />
-                          </div>
-                          <div>
-                            <label className="text-xs">Buy Level</label>
-                            <Input type="number" value={params.buyLevel ?? 30} onChange={e => updateParam('buyLevel', Number(e.target.value))} />
-                          </div>
-                          <div>
-                            <label className="text-xs">Sell Level</label>
-                            <Input type="number" value={params.sellLevel ?? 70} onChange={e => updateParam('sellLevel', Number(e.target.value))} />
-                          </div>
-                        </div>
-                      )}
-                      {kind === 'macd' && (
-                        <div className="grid grid-cols-3 gap-3">
-                          <div>
-                            <label className="text-xs">Fast</label>
-                            <Input type="number" value={params.fast ?? 12} onChange={e => updateParam('fast', Number(e.target.value))} />
-                          </div>
-                          <div>
-                            <label className="text-xs">Slow</label>
-                            <Input type="number" value={params.slow ?? 26} onChange={e => updateParam('slow', Number(e.target.value))} />
-                          </div>
-                          <div>
-                            <label className="text-xs">Signal</label>
-                            <Input type="number" value={params.signal ?? 9} onChange={e => updateParam('signal', Number(e.target.value))} />
-                          </div>
-                        </div>
-                      )}
-                      {kind === 'breakout' && (
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="text-xs">Lookback</label>
-                            <Input type="number" value={params.lookback ?? 20} onChange={e => updateParam('lookback', Number(e.target.value))} />
-                          </div>
-                        </div>
-                      )}
-                      {kind === 'momentum' && (
-                        <div className="grid grid-cols-2 gap-3">
-                          <div>
-                            <label className="text-xs">Period</label>
-                            <Input type="number" value={params.period ?? 63} onChange={e => updateParam('period', Number(e.target.value))} />
-                          </div>
-                        </div>
-                      )}
-                    </div>
-                  )}
-                </div>
-                {kind && testMetrics && (
-                  <div className="mt-4 grid grid-cols-3 gap-3 text-sm">
-                    <div><span className="text-muted-foreground">Total Return:</span> {Math.round((testMetrics.totalReturnPct ?? 0) * 10) / 10}%</div>
-                    <div><span className="text-muted-foreground">Sharpe:</span> {Math.round((testMetrics.sharpe ?? 0) * 10) / 10}</div>
-                    <div><span className="text-muted-foreground">Max DD:</span> {Math.round((testMetrics.maxDrawdownPct ?? 0) * 10) / 10}%</div>
-                    <div><span className="text-muted-foreground">Win Rate:</span> {Math.round((testMetrics.winRatePct ?? 0))}%</div>
-                    <div><span className="text-muted-foreground">Profit Factor:</span> {Math.round((testMetrics.profitFactor ?? 0) * 10) / 10}</div>
-                  </div>
-                )}
-              </CardContent>
-            </Card>
-          </div>
-        </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
       </div>
-    </section>
+
+      {/* Strategy Canvas */}
+      <div className="lg:col-span-2">
+        <Card className="card-trading">
+          <CardHeader>
+            <CardTitle className="flex items-center gap-2">
+              <Target className="w-5 h-5" />
+              Strategy Canvas
+            </CardTitle>
+            <CardDescription>
+              Drop components here to build your strategy
+            </CardDescription>
+          </CardHeader>
+          <CardContent>
+            <div
+              onDrop={handleDrop}
+              onDragOver={(e) => e.preventDefault()}
+              className="min-h-[400px] border-2 border-dashed border-muted-foreground/25 rounded-lg p-6"
+            >
+              {activeBlocks.length === 0 ? (
+                <div className="flex items-center justify-center h-full text-muted-foreground">
+                  <div className="text-center">
+                    <Target className="w-12 h-12 mx-auto mb-4 opacity-50" />
+                    <p>Drag components here to start building</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="space-y-3">
+                  {activeBlocks.map((block, index) => (
+                    <div
+                      key={`${block.id}-${index}`}
+                      className="flex items-center justify-between p-3 bg-muted/50 rounded-lg"
+                    >
+                      <div className="flex items-center gap-3">
+                        <div className={`p-2 rounded-lg ${block.color}`}>
+                          <block.icon className="w-4 h-4 text-white" />
+                        </div>
+                        <div>
+                          <h4 className="font-medium">{block.title}</h4>
+                          <p className="text-sm text-muted-foreground">{block.description}</p>
+                        </div>
+                      </div>
+                      <Button
+                        variant="ghost"
+                        size="sm"
+                        onClick={() => removeBlock(block.id)}
+                        className="text-destructive hover:text-destructive"
+                      >
+                        Remove
+                      </Button>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Strategy Configuration */}
+            {kind && (
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+                <h4 className="font-semibold mb-3">Strategy Configuration</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <label className="text-sm font-medium">Strategy Type</label>
+                    <Input value={kind} disabled className="mt-1 text-black" />
+                  </div>
+                  {Object.entries(params).map(([key, value]) => (
+                    <div key={key}>
+                      <label className="text-sm font-medium capitalize">{key}</label>
+                      <Input
+                        type="number"
+                        value={value}
+                        onChange={(e) => setParams(prev => ({ ...prev, [key]: Number(e.target.value) }))}
+                        className="mt-1 text-black"
+                      />
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {/* Test Results */}
+            {testMetrics && (
+              <div className="mt-6 p-4 bg-muted/50 rounded-lg">
+                <h4 className="font-semibold mb-3">Backtest Results</h4>
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="text-center p-3 bg-card rounded-lg">
+                    <div className="text-2xl font-bold text-success">
+                      {testMetrics.totalReturnPct?.toFixed(1)}%
+                    </div>
+                    <div className="text-sm text-muted-foreground">Total Return</div>
+                  </div>
+                  <div className="text-center p-3 bg-card rounded-lg">
+                    <div className="text-2xl font-bold text-primary">
+                      {testMetrics.sharpe?.toFixed(2)}
+                    </div>
+                    <div className="text-sm text-muted-foreground">Sharpe Ratio</div>
+                  </div>
+                  <div className="text-center p-3 bg-card rounded-lg">
+                    <div className="text-2xl font-bold text-destructive">
+                      {testMetrics.maxDrawdownPct?.toFixed(1)}%
+                    </div>
+                    <div className="text-sm text-muted-foreground">Max Drawdown</div>
+                  </div>
+                  <div className="text-center p-3 bg-card rounded-lg">
+                    <div className="text-2xl font-bold text-accent">
+                      {testMetrics.winRatePct?.toFixed(1)}%
+                    </div>
+                    <div className="text-sm text-muted-foreground">Win Rate</div>
+                  </div>
+                </div>
+              </div>
+            )}
+
+            {/* Action Buttons */}
+            <div className="flex gap-3 mt-6">
+              <Button
+                onClick={runTest}
+                disabled={!kind}
+                className="flex items-center gap-2"
+              >
+                <Play className="w-4 h-4" />
+                Test Strategy
+              </Button>
+              <Button
+                variant="outline"
+                disabled={!kind}
+                className="flex items-center gap-2"
+              >
+                <Save className="w-4 h-4" />
+                Save Strategy
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    </div>
   );
 }

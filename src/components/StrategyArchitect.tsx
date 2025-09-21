@@ -1,3 +1,4 @@
+// AI Strategy Architect component for natural language to trading strategy conversion
 import React, { useState } from 'react';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
@@ -5,10 +6,13 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from './ui/
 import { Alert, AlertDescription } from './ui/alert';
 import { Badge } from './ui/badge';
 import { Separator } from './ui/separator';
+// Comprehensive icon set for strategy building and configuration
 import { Loader2, Sparkles, Copy, CheckCircle, Download, Eye, Settings, Target, TrendingUp, Shield } from 'lucide-react';
 import { useStrategyArchitect } from '../hooks/useAgents';
 
+// Main Strategy Architect component with natural language processing
 export default function StrategyArchitect() {
+  // State management for user input and strategy generation
   const [input, setInput] = useState('');
   const [copied, setCopied] = useState(false);
   const { data, loading, error, buildStrategy, reset } = useStrategyArchitect();

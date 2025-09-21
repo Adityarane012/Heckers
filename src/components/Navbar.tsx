@@ -19,8 +19,6 @@ export function Navbar() {
     let newTab = "home";
     if (path === "/pricing") {
       newTab = "pricing";
-    } else if (path === "/agents") {
-      newTab = "agents";
     } else if (hash === "#strategies") {
       newTab = "strategies";
     } else if (hash === "#backtesting") {
@@ -96,18 +94,6 @@ export function Navbar() {
               }`}
             >
               Community
-            </Link>
-            <Link 
-              to="/agents" 
-              onClick={() => handleTabClick("agents")}
-              className={`transition-colors relative py-2 px-1 flex items-center gap-1 ${
-                activeTab === "agents" 
-                  ? "text-primary" 
-                  : "text-foreground hover:text-primary"
-              }`}
-            >
-              <Sparkles className="w-4 h-4" />
-              AI Agents
             </Link>
             <Link 
               to="/pricing" 

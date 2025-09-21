@@ -54,20 +54,6 @@ export function FeaturesShowcase({ isVisible, onClose }: FeaturesShowcaseProps) 
       color: "bg-green-500/10 text-green-600 border-green-200"
     },
     {
-      icon: TrendingUp,
-      title: "Real-Time Price Prediction",
-      description: "ML-powered price movement prediction with 70%+ accuracy for short-term trades",
-      badge: "AI/ML",
-      color: "bg-purple-500/10 text-purple-600 border-purple-200"
-    },
-    {
-      icon: Target,
-      title: "Multi-Exchange Support",
-      description: "Connect to major exchanges: Binance, Coinbase, Kraken, and traditional markets",
-      badge: "Global",
-      color: "bg-orange-500/10 text-orange-600 border-orange-200"
-    },
-    {
       icon: Shield,
       title: "Risk Management Tools",
       description: "Built-in risk assessment, drawdown analysis, and portfolio protection",
@@ -109,20 +95,6 @@ export function FeaturesShowcase({ isVisible, onClose }: FeaturesShowcaseProps) 
       badge: "Portfolio",
       color: "bg-emerald-500/10 text-emerald-600 border-emerald-200"
     },
-    {
-      icon: Clock,
-      title: "Real-Time Execution",
-      description: "Fast order execution with <100ms response times and real-time market data",
-      badge: "Speed",
-      color: "bg-amber-500/10 text-amber-600 border-amber-200"
-    },
-    {
-      icon: CheckCircle,
-      title: "Compliance & Security",
-      description: "Bank-grade security, regulatory compliance, and audit trails for all trades",
-      badge: "Security",
-      color: "bg-slate-500/10 text-slate-600 border-slate-200"
-    }
   ];
 
   const stats = [

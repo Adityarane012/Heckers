@@ -1,3 +1,4 @@
+// Advanced OHLCV Data Analyst component with AI-powered market analysis
 import React, { useState, useRef } from 'react';
 import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
@@ -6,10 +7,13 @@ import { Alert, AlertDescription } from './ui/alert';
 import { Badge } from './ui/badge';
 import { Input } from './ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
+// Tabbed interface for multiple data input formats
 import { Tabs, TabsContent, TabsList, TabsTrigger } from './ui/tabs';
+// Comprehensive icon set for data analysis and visualization
 import { Loader2, BarChart3, Copy, CheckCircle, Upload, FileText, FileUp, AlertTriangle, Info, Download, Eye, Settings, Target, TrendingUp, Shield, Database, Zap } from 'lucide-react';
 import { useOHLCVAnalyst } from '../hooks/useAgents';
 
+// Interface for OHLCV market data structure with comprehensive validation
 interface OHLCVData {
   timestamp: number;
   open: number;
@@ -19,6 +23,7 @@ interface OHLCVData {
   volume: number;
 }
 
+// Validation result interface for data quality assessment
 interface DataValidationResult {
   isValid: boolean;
   data: OHLCVData[];
@@ -26,7 +31,9 @@ interface DataValidationResult {
   warnings: string[];
 }
 
+// Main OHLCV Analyst component with multi-format data input and AI analysis
 export default function OHLCVAnalyst() {
+  // State management for symbol, analysis type, and multiple data input formats
   const [symbol, setSymbol] = useState('');
   const [analysisType, setAnalysisType] = useState('Comprehensive Market Analysis');
   const [jsonInput, setJsonInput] = useState('');
@@ -60,11 +67,12 @@ export default function OHLCVAnalyst() {
     try {
       if (format === 'json') {
         const parsed = JSON.parse(input.trim());
-        if (!Array.isArray(parsed)) {
-          errors.push('JSON data must be an array of objects');
+        if (typeof parsed !== 'object' || Array.isArray(parsed)) {
+          errors.push('JSON data must be a dictionary/object with date keys');
           return { isValid: false, data: [], errors, warnings };
         }
-        convertedData = parsed;
+        // Convert dictionary to array format for processing
+        convertedData = Object.values(parsed);
       } else if (format === 'csv') {
         convertedData = parseCSVData(input, errors, warnings);
       } else if (format === 'raw') {
@@ -300,8 +308,8 @@ export default function OHLCVAnalyst() {
     }
   };
 
-  const exampleOHLCV = [
-    {
+  const exampleOHLCV = {
+    "2024-01-01": {
       timestamp: 1704067200000,
       open: 150.0,
       high: 155.5,
@@ -309,15 +317,23 @@ export default function OHLCVAnalyst() {
       close: 154.8,
       volume: 45000000
     },
-    {
+    "2024-01-02": {
       timestamp: 1704153600000,
       open: 154.8,
       high: 157.2,
       low: 153.1,
       close: 156.5,
       volume: 52000000
+    },
+    "2024-01-03": {
+      timestamp: 1704240000000,
+      open: 156.5,
+      high: 159.8,
+      low: 155.2,
+      close: 158.3,
+      volume: 48000000
     }
-  ];
+  };
 
   const analysisTypes = [
     'Comprehensive Market Analysis',
@@ -330,23 +346,23 @@ export default function OHLCVAnalyst() {
   ];
 
   return (
-    <Card className="w-full max-w-6xl mx-auto">
-      <CardHeader className="bg-gradient-to-r from-green-50 to-emerald-50 border-b">
+    <Card className="w-full max-w-6xl mx-auto bg-gray-900 border-gray-700">
+      <CardHeader className="bg-gradient-to-r from-gray-800 to-gray-900 border-b border-gray-700">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="p-2 bg-green-100 rounded-lg">
-              <BarChart3 className="h-6 w-6 text-green-600" />
+            <div className="p-2 bg-green-600 rounded-lg">
+              <BarChart3 className="h-6 w-6 text-white" />
             </div>
             <div>
-              <CardTitle className="text-2xl font-bold text-green-900">
+              <CardTitle className="text-2xl font-bold text-white">
                 AI OHLCV Data Analyst
               </CardTitle>
-              <CardDescription className="text-green-700 mt-1">
+              <CardDescription className="text-gray-300 mt-1">
                 Upload OHLCV market data for comprehensive AI-powered analysis including price action, volume patterns, technical indicators, and trading opportunities.
               </CardDescription>
             </div>
           </div>
-          <Badge variant="secondary" className="bg-green-100 text-green-800 border-green-200">
+          <Badge variant="secondary" className="bg-green-600 text-white border-green-500">
             <Zap className="h-3 w-3 mr-1" />
             Powered by Gemini AI
           </Badge>
@@ -355,14 +371,14 @@ export default function OHLCVAnalyst() {
       <CardContent className="space-y-6">
         <form onSubmit={handleSubmit} className="space-y-6">
           {/* Input Configuration Section */}
-          <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border">
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
             <div className="flex items-center gap-2 mb-4">
-              <Settings className="h-4 w-4 text-blue-600" />
-              <h3 className="font-semibold text-blue-900">Analysis Configuration</h3>
+              <Settings className="h-4 w-4 text-blue-400" />
+              <h3 className="font-semibold text-white">Analysis Configuration</h3>
             </div>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <label htmlFor="symbol" className="text-sm font-medium text-blue-800">
+                <label htmlFor="symbol" className="text-sm font-medium text-gray-300">
                   Symbol (Optional):
                 </label>
                 <Input
@@ -371,20 +387,20 @@ export default function OHLCVAnalyst() {
                   onChange={(e) => setSymbol(e.target.value)}
                   placeholder="e.g., AAPL, TSLA, BTC-USD"
                   disabled={loading}
-                  className="bg-white border-blue-200 focus:border-blue-400"
+                  className="bg-gray-700 border-gray-600 focus:border-blue-400 text-white placeholder-gray-400"
                 />
               </div>
               <div className="space-y-2">
-                <label htmlFor="analysis-type" className="text-sm font-medium text-blue-800">
+                <label htmlFor="analysis-type" className="text-sm font-medium text-gray-300">
                   Analysis Type:
                 </label>
                 <Select value={analysisType} onValueChange={setAnalysisType} disabled={loading}>
-                  <SelectTrigger className="bg-white border-blue-200 focus:border-blue-400">
+                  <SelectTrigger className="bg-gray-700 border-gray-600 focus:border-blue-400 text-white">
                     <SelectValue placeholder="Select analysis type" />
                   </SelectTrigger>
-                  <SelectContent>
+                  <SelectContent className="bg-gray-800 border-gray-700">
                     {analysisTypes.map((type) => (
-                      <SelectItem key={type} value={type}>
+                      <SelectItem key={type} value={type} className="text-white hover:bg-gray-700">
                         {type}
                       </SelectItem>
                     ))}
@@ -395,10 +411,10 @@ export default function OHLCVAnalyst() {
           </div>
 
           {/* File Upload Section */}
-          <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border">
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
             <div className="flex items-center gap-2 mb-3">
-              <Upload className="h-4 w-4 text-purple-600" />
-              <h3 className="font-semibold text-purple-900">Upload Data File</h3>
+              <Upload className="h-4 w-4 text-purple-400" />
+              <h3 className="font-semibold text-white">Upload Data File</h3>
             </div>
             <div className="flex items-center gap-3">
               <input
@@ -413,88 +429,88 @@ export default function OHLCVAnalyst() {
                 variant="outline"
                 onClick={() => fileInputRef.current?.click()}
                 disabled={loading}
-                className="flex items-center gap-2 bg-white border-purple-200 hover:border-purple-400 hover:bg-purple-50"
+                className="flex items-center gap-2 bg-gray-700 border-gray-600 hover:border-purple-400 hover:bg-gray-600 text-white"
               >
                 <FileUp className="h-4 w-4" />
                 Choose File
               </Button>
-              <div className="text-sm text-purple-700">
+              <div className="text-sm text-gray-300">
                 <span className="font-medium">Supported formats:</span> CSV, JSON, or raw text files
               </div>
             </div>
           </div>
 
           {/* Data Input Tabs */}
-          <div className="bg-gradient-to-r from-gray-50 to-slate-50 p-4 rounded-lg border">
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
             <div className="flex items-center gap-2 mb-4">
-              <Database className="h-4 w-4 text-gray-600" />
-              <h3 className="font-semibold text-gray-900">Data Input</h3>
+              <Database className="h-4 w-4 text-blue-400" />
+              <h3 className="font-semibold text-white">Data Input</h3>
             </div>
             <div className="space-y-3">
-              <label className="text-sm font-medium text-gray-700">Or paste your data directly:</label>
+              <label className="text-sm font-medium text-gray-300">Or paste your data directly:</label>
               <Tabs value={inputFormat} onValueChange={(value) => setInputFormat(value as 'json' | 'csv' | 'raw')}>
-                <TabsList className="grid w-full grid-cols-3 bg-white border">
-                  <TabsTrigger value="json" className="data-[state=active]:bg-blue-100 data-[state=active]:text-blue-900">
+                <TabsList className="grid w-full grid-cols-3 bg-gray-700 border border-gray-600">
+                  <TabsTrigger value="json" className="data-[state=active]:bg-blue-600 data-[state=active]:text-white text-gray-300">
                     <FileText className="h-3 w-3 mr-1" />
                     JSON
                   </TabsTrigger>
-                  <TabsTrigger value="csv" className="data-[state=active]:bg-green-100 data-[state=active]:text-green-900">
+                  <TabsTrigger value="csv" className="data-[state=active]:bg-green-600 data-[state=active]:text-white text-gray-300">
                     <FileText className="h-3 w-3 mr-1" />
                     CSV
                   </TabsTrigger>
-                  <TabsTrigger value="raw" className="data-[state=active]:bg-purple-100 data-[state=active]:text-purple-900">
+                  <TabsTrigger value="raw" className="data-[state=active]:bg-purple-600 data-[state=active]:text-white text-gray-300">
                     <FileText className="h-3 w-3 mr-1" />
                     Raw Text
                   </TabsTrigger>
                 </TabsList>
               
                 <TabsContent value="json" className="space-y-2">
-                  <div className="bg-white p-3 rounded-lg border">
+                  <div className="bg-gray-800 p-3 rounded-lg border border-gray-700">
                     <Textarea
                       value={jsonInput}
                       onChange={(e) => setJsonInput(e.target.value)}
-                      placeholder={`Paste your OHLCV data here as JSON array:\n\n${JSON.stringify(exampleOHLCV, null, 2)}`}
+                      placeholder={`Paste your OHLCV data here as JSON dictionary:\n\n${JSON.stringify(exampleOHLCV, null, 2)}`}
                       rows={12}
-                      className="min-h-[300px] font-mono text-sm border-0 focus:ring-0"
+                      className="min-h-[300px] font-mono text-sm border-0 focus:ring-0 text-white bg-gray-900 placeholder-gray-400"
                       disabled={loading}
                     />
-                    <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
+                    <div className="flex justify-between items-center mt-2 text-xs text-gray-400">
                       <span>{jsonInput.length}/10000 characters</span>
-                      <Badge variant="outline" className="text-xs">JSON Format</Badge>
+                      <Badge variant="outline" className="text-xs bg-gray-700 text-gray-300 border-gray-600">JSON Format</Badge>
                     </div>
                   </div>
                 </TabsContent>
                 
                 <TabsContent value="csv" className="space-y-2">
-                  <div className="bg-white p-3 rounded-lg border">
+                  <div className="bg-gray-800 p-3 rounded-lg border border-gray-700">
                     <Textarea
                       value={csvInput}
                       onChange={(e) => setCsvInput(e.target.value)}
                       placeholder={`Paste your CSV data here:\n\ndate,open,high,low,close,volume\n2024-01-01,150.0,155.5,149.2,154.8,45000000\n2024-01-02,154.8,157.2,153.1,156.5,52000000`}
                       rows={12}
-                      className="min-h-[300px] font-mono text-sm border-0 focus:ring-0"
+                      className="min-h-[300px] font-mono text-sm border-0 focus:ring-0 text-white bg-gray-900 placeholder-gray-400"
                       disabled={loading}
                     />
-                    <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
+                    <div className="flex justify-between items-center mt-2 text-xs text-gray-400">
                       <span>{csvInput.length}/10000 characters</span>
-                      <Badge variant="outline" className="text-xs">CSV Format</Badge>
+                      <Badge variant="outline" className="text-xs bg-gray-700 text-gray-300 border-gray-600">CSV Format</Badge>
                     </div>
                   </div>
                 </TabsContent>
                 
                 <TabsContent value="raw" className="space-y-2">
-                  <div className="bg-white p-3 rounded-lg border">
+                  <div className="bg-gray-800 p-3 rounded-lg border border-gray-700">
                     <Textarea
                       value={jsonInput}
                       onChange={(e) => setJsonInput(e.target.value)}
                       placeholder={`Paste your raw data here (space or tab separated):\n\n2024-01-01 150.0 155.5 149.2 154.8 45000000\n2024-01-02 154.8 157.2 153.1 156.5 52000000`}
                       rows={12}
-                      className="min-h-[300px] font-mono text-sm border-0 focus:ring-0"
+                      className="min-h-[300px] font-mono text-sm border-0 focus:ring-0 text-white bg-gray-900 placeholder-gray-400"
                       disabled={loading}
                     />
-                    <div className="flex justify-between items-center mt-2 text-xs text-gray-500">
+                    <div className="flex justify-between items-center mt-2 text-xs text-gray-400">
                       <span>{jsonInput.length}/10000 characters</span>
-                      <Badge variant="outline" className="text-xs">Raw Text</Badge>
+                      <Badge variant="outline" className="text-xs bg-gray-700 text-gray-300 border-gray-600">Raw Text</Badge>
                     </div>
                   </div>
                 </TabsContent>
@@ -503,10 +519,10 @@ export default function OHLCVAnalyst() {
           </div>
 
           {/* Example Data Section */}
-          <div className="bg-gradient-to-r from-amber-50 to-orange-50 p-4 rounded-lg border">
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
             <div className="flex items-center gap-2 mb-3">
-              <Target className="h-4 w-4 text-amber-600" />
-              <h3 className="font-semibold text-amber-900">Quick Examples</h3>
+              <Target className="h-4 w-4 text-amber-400" />
+              <h3 className="font-semibold text-white">Quick Examples</h3>
             </div>
             <div className="flex flex-wrap gap-2">
               <Button
@@ -518,7 +534,7 @@ export default function OHLCVAnalyst() {
                   setInputFormat('json');
                 }}
                 disabled={loading}
-                className="text-xs bg-white border-amber-200 hover:border-amber-400 hover:bg-amber-50"
+                className="text-xs bg-gray-700 border-gray-600 hover:border-amber-400 hover:bg-gray-600 text-white"
               >
                 <FileText className="h-3 w-3 mr-1" />
                 Load JSON Example
@@ -535,7 +551,7 @@ export default function OHLCVAnalyst() {
                   setInputFormat('csv');
                 }}
                 disabled={loading}
-                className="text-xs bg-white border-amber-200 hover:border-amber-400 hover:bg-amber-50"
+                className="text-xs bg-gray-700 border-gray-600 hover:border-amber-400 hover:bg-gray-600 text-white"
               >
                 <FileText className="h-3 w-3 mr-1" />
                 Load CSV Example
@@ -544,11 +560,11 @@ export default function OHLCVAnalyst() {
           </div>
 
           {/* Action Buttons */}
-          <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border">
+          <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-green-600" />
-                <span className="font-medium text-green-900">Ready to Analyze</span>
+                <TrendingUp className="h-4 w-4 text-green-400" />
+                <span className="font-medium text-white">Ready to Analyze</span>
               </div>
               <div className="flex gap-2">
                 <Button
@@ -574,7 +590,7 @@ export default function OHLCVAnalyst() {
                     variant="outline"
                     onClick={handleReset}
                     disabled={loading}
-                    className="border-green-200 hover:border-green-400 hover:bg-green-50"
+                    className="border-gray-600 hover:border-gray-500 hover:bg-gray-700 text-white"
                   >
                     Reset
                   </Button>
@@ -588,9 +604,9 @@ export default function OHLCVAnalyst() {
         {validationResult && (
           <div className="space-y-2">
             {validationResult.errors.length > 0 && (
-              <Alert variant="destructive">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
+              <Alert variant="destructive" className="bg-red-900/20 border-red-800">
+                <AlertTriangle className="h-4 w-4 text-red-400" />
+                <AlertDescription className="text-red-200">
                   <div className="font-medium mb-1">Data Validation Errors:</div>
                   <ul className="list-disc list-inside space-y-1">
                     {validationResult.errors.map((error, index) => (
@@ -602,9 +618,9 @@ export default function OHLCVAnalyst() {
             )}
             
             {validationResult.warnings.length > 0 && (
-              <Alert>
-                <Info className="h-4 w-4" />
-                <AlertDescription>
+              <Alert className="bg-yellow-900/20 border-yellow-800">
+                <Info className="h-4 w-4 text-yellow-400" />
+                <AlertDescription className="text-yellow-200">
                   <div className="font-medium mb-1">Warnings:</div>
                   <ul className="list-disc list-inside space-y-1">
                     {validationResult.warnings.map((warning, index) => (
@@ -616,9 +632,9 @@ export default function OHLCVAnalyst() {
             )}
             
             {validationResult.isValid && (
-              <Alert className="border-green-200 bg-green-50">
-                <CheckCircle className="h-4 w-4 text-green-600" />
-                <AlertDescription className="text-green-800">
+              <Alert className="border-green-800 bg-green-900/20">
+                <CheckCircle className="h-4 w-4 text-green-400" />
+                <AlertDescription className="text-green-200">
                   <div className="font-medium">Data validation successful!</div>
                   <div className="text-sm">
                     Found {validationResult.data.length} valid data points ready for analysis.
@@ -630,8 +646,8 @@ export default function OHLCVAnalyst() {
         )}
 
         {error && (
-          <Alert variant="destructive">
-            <AlertDescription>
+          <Alert variant="destructive" className="bg-red-900/20 border-red-800">
+            <AlertDescription className="text-red-200">
               {error}
             </AlertDescription>
           </Alert>
@@ -640,19 +656,19 @@ export default function OHLCVAnalyst() {
         {data && (
           <div className="space-y-6">
             {/* Results Header */}
-            <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border">
+            <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
               <div className="flex items-center justify-between">
                 <div className="flex items-center gap-3">
-                  <div className="p-2 bg-green-100 rounded-lg">
-                    <Eye className="h-5 w-5 text-green-600" />
+                  <div className="p-2 bg-green-600 rounded-lg">
+                    <Eye className="h-5 w-5 text-white" />
                   </div>
                   <div>
-                    <h3 className="text-xl font-bold text-green-900">AI Market Analysis</h3>
-                    <p className="text-sm text-green-700">Comprehensive analysis of your market data</p>
+                    <h3 className="text-xl font-bold text-white">AI Market Analysis</h3>
+                    <p className="text-sm text-gray-300">Comprehensive analysis of your market data</p>
                   </div>
                 </div>
                 <div className="flex items-center gap-2">
-                  <Badge variant="default" className="bg-green-100 text-green-800">
+                  <Badge variant="default" className="bg-green-600 text-white">
                     <CheckCircle className="h-3 w-3 mr-1" />
                     {data.data_points_analyzed} Data Points
                   </Badge>
@@ -660,7 +676,7 @@ export default function OHLCVAnalyst() {
                     variant="outline"
                     size="sm"
                     onClick={handleCopy}
-                    className="flex items-center gap-1 border-green-200 hover:border-green-400 hover:bg-green-50"
+                    className="flex items-center gap-1 border-gray-600 hover:border-gray-500 hover:bg-gray-700 text-white"
                   >
                     <Copy className="h-3 w-3" />
                     {copied ? 'Copied!' : 'Copy'}
@@ -671,51 +687,51 @@ export default function OHLCVAnalyst() {
 
             {/* Analysis Metadata */}
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border">
+              <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
                 <div className="flex items-center gap-2 mb-2">
-                  <Target className="h-4 w-4 text-blue-600" />
-                  <div className="font-medium text-blue-900">Symbol</div>
+                  <Target className="h-4 w-4 text-blue-400" />
+                  <div className="font-medium text-white">Symbol</div>
                 </div>
-                <div className="text-blue-700 font-semibold">{data.symbol}</div>
+                <div className="text-blue-300 font-semibold">{data.symbol}</div>
               </div>
-              <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border">
+              <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
                 <div className="flex items-center gap-2 mb-2">
-                  <Settings className="h-4 w-4 text-green-600" />
-                  <div className="font-medium text-green-900">Analysis Type</div>
+                  <Settings className="h-4 w-4 text-green-400" />
+                  <div className="font-medium text-white">Analysis Type</div>
                 </div>
-                <div className="text-green-700 font-semibold">{data.analysis_type}</div>
+                <div className="text-green-300 font-semibold">{data.analysis_type}</div>
               </div>
-              <div className="bg-gradient-to-r from-purple-50 to-pink-50 p-4 rounded-lg border">
+              <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
                 <div className="flex items-center gap-2 mb-2">
-                  <Database className="h-4 w-4 text-purple-600" />
-                  <div className="font-medium text-purple-900">Data Points</div>
+                  <Database className="h-4 w-4 text-purple-400" />
+                  <div className="font-medium text-white">Data Points</div>
                 </div>
-                <div className="text-purple-700 font-semibold">{data.data_points_analyzed}</div>
+                <div className="text-purple-300 font-semibold">{data.data_points_analyzed}</div>
               </div>
             </div>
 
             {/* Analysis Results */}
-            <div className="bg-gradient-to-r from-gray-50 to-slate-50 p-4 rounded-lg border">
+            <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
               <div className="flex items-center gap-2 mb-4">
-                <BarChart3 className="h-4 w-4 text-gray-600" />
-                <h4 className="font-semibold text-gray-900">Analysis Results</h4>
+                <BarChart3 className="h-4 w-4 text-blue-400" />
+                <h4 className="font-semibold text-white">Analysis Results</h4>
               </div>
-              <div className="bg-white p-4 rounded-lg border">
-                <pre className="whitespace-pre-wrap text-sm text-gray-800 leading-relaxed">
+              <div className="bg-gray-900 p-4 rounded-lg border border-gray-700">
+                <pre className="whitespace-pre-wrap text-sm text-white leading-relaxed">
                   {data.analysis}
                 </pre>
               </div>
             </div>
 
             {/* Footer */}
-            <div className="flex items-center justify-between text-sm text-gray-500 bg-gray-50 p-3 rounded-lg">
+            <div className="flex items-center justify-between text-sm text-gray-400 bg-gray-800 p-3 rounded-lg border border-gray-700">
               <div className="flex items-center gap-1">
                 <BarChart3 className="h-3 w-3" />
                 Generated by {data.powered_by}
               </div>
               <div className="flex items-center gap-4">
                 <span>Analysis Complete</span>
-                <Badge variant="outline" className="text-xs">
+                <Badge variant="outline" className="text-xs bg-gray-700 text-gray-300 border-gray-600">
                   Ready for Trading
                 </Badge>
               </div>
@@ -724,40 +740,40 @@ export default function OHLCVAnalyst() {
         )}
 
         {/* Supported Data Formats */}
-        <div className="bg-gradient-to-r from-green-50 to-emerald-50 p-4 rounded-lg border">
+        <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
           <div className="flex items-center gap-2 mb-4">
-            <Shield className="h-4 w-4 text-green-600" />
-            <h4 className="font-semibold text-green-900">Supported Data Formats</h4>
+            <Shield className="h-4 w-4 text-green-400" />
+            <h4 className="font-semibold text-white">Supported Data Formats</h4>
           </div>
           <div className="grid md:grid-cols-3 gap-4">
-            <div className="bg-white p-3 rounded-lg border border-green-200">
+            <div className="bg-gray-800 p-3 rounded-lg border border-gray-700">
               <div className="flex items-center gap-2 mb-2">
-                <FileText className="h-4 w-4 text-blue-600" />
-                <strong className="text-blue-900">JSON Format</strong>
+                <FileText className="h-4 w-4 text-blue-400" />
+                <strong className="text-white">JSON Format</strong>
               </div>
-              <ul className="space-y-1 text-sm text-blue-800">
-                <li>• Array of objects</li>
+              <ul className="space-y-1 text-sm text-gray-300">
+                <li>• Dictionary with date keys</li>
                 <li>• timestamp, open, high, low, close, volume</li>
                 <li>• Unix timestamp in milliseconds</li>
               </ul>
             </div>
-            <div className="bg-white p-3 rounded-lg border border-green-200">
+            <div className="bg-gray-800 p-3 rounded-lg border border-gray-700">
               <div className="flex items-center gap-2 mb-2">
-                <FileText className="h-4 w-4 text-green-600" />
-                <strong className="text-green-900">CSV Format</strong>
+                <FileText className="h-4 w-4 text-green-400" />
+                <strong className="text-white">CSV Format</strong>
               </div>
-              <ul className="space-y-1 text-sm text-green-800">
+              <ul className="space-y-1 text-sm text-gray-300">
                 <li>• Header row required</li>
                 <li>• Flexible column names</li>
                 <li>• Auto-detects date formats</li>
               </ul>
             </div>
-            <div className="bg-white p-3 rounded-lg border border-green-200">
+            <div className="bg-gray-800 p-3 rounded-lg border border-gray-700">
               <div className="flex items-center gap-2 mb-2">
-                <FileText className="h-4 w-4 text-purple-600" />
-                <strong className="text-purple-900">Raw Text</strong>
+                <FileText className="h-4 w-4 text-purple-400" />
+                <strong className="text-white">Raw Text</strong>
               </div>
-              <ul className="space-y-1 text-sm text-purple-800">
+              <ul className="space-y-1 text-sm text-gray-300">
                 <li>• Space/tab separated</li>
                 <li>• Date OHLCV format</li>
                 <li>• One row per data point</li>
@@ -767,48 +783,48 @@ export default function OHLCVAnalyst() {
         </div>
 
         {/* Analysis Features */}
-        <div className="bg-gradient-to-r from-blue-50 to-indigo-50 p-4 rounded-lg border">
+        <div className="bg-gradient-to-r from-gray-800 to-gray-900 p-4 rounded-lg border border-gray-700">
           <div className="flex items-center gap-2 mb-4">
-            <TrendingUp className="h-4 w-4 text-blue-600" />
-            <h4 className="font-semibold text-blue-900">Analysis Features</h4>
+            <TrendingUp className="h-4 w-4 text-blue-400" />
+            <h4 className="font-semibold text-white">Analysis Features</h4>
           </div>
           <div className="grid md:grid-cols-2 gap-4">
-            <div className="bg-white p-3 rounded-lg border border-blue-200">
-              <ul className="text-sm text-blue-800 space-y-2">
+            <div className="bg-gray-800 p-3 rounded-lg border border-gray-700">
+              <ul className="text-sm text-gray-300 space-y-2">
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                   Price action and trend analysis
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                   Volume pattern recognition
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                   Technical indicator insights
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                   Support and resistance levels
                 </li>
               </ul>
             </div>
-            <div className="bg-white p-3 rounded-lg border border-blue-200">
-              <ul className="text-sm text-blue-800 space-y-2">
+            <div className="bg-gray-800 p-3 rounded-lg border border-gray-700">
+              <ul className="text-sm text-gray-300 space-y-2">
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                   Risk assessment and volatility metrics
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                   Trading opportunity identification
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                   Market sentiment analysis
                 </li>
                 <li className="flex items-center gap-2">
-                  <div className="w-1.5 h-1.5 bg-blue-500 rounded-full"></div>
+                  <div className="w-1.5 h-1.5 bg-blue-400 rounded-full"></div>
                   AI-powered insights and recommendations
                 </li>
               </ul>

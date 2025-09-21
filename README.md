@@ -1,6 +1,6 @@
 # AlgoCode - AI-Powered Trading Platform
 
-A comprehensive full-stack trading platform featuring algorithmic strategy building, backtesting, and AI-powered price prediction.
+A comprehensive full-stack trading platform featuring algorithmic strategy building, backtesting, and AI-powered trading agents.
 
 ## 🚀 Features
 
@@ -8,7 +8,6 @@ A comprehensive full-stack trading platform featuring algorithmic strategy build
 - **Strategy Builder**: Drag-and-drop interface for creating trading algorithms
 - **Backtesting Engine**: Historical performance testing with real market data
 - **Paper Trading**: Risk-free trading simulation
-- **Price Predictor**: AI-powered next hour price movement prediction
 
 ### 🤖 AI Agents (Powered by Gemini AI)
 - **Strategy Architect**: Convert natural language trading ideas into structured strategy configurations
@@ -18,7 +17,6 @@ A comprehensive full-stack trading platform featuring algorithmic strategy build
 ### Technical Features
 - **Multi-Exchange Support**: USA (NASDAQ/NYSE), NSE (India), BSE (India)
 - **Real-time Data**: Yahoo Finance integration with fallback systems
-- **Machine Learning**: RandomForest-based price prediction
 - **Responsive Design**: Modern, accessible UI with dark/light themes
 
 ## 🏗️ Architecture
@@ -32,10 +30,6 @@ AlgoCode/
 │   │   │   └── agents/     # Gemini AI agent services
 │   │   └── index.ts        # Server entry point
 │   └── package.json
-├── predictor-backend/       # Python FastAPI price predictor
-│   ├── main.py             # FastAPI application
-│   ├── requirements.txt    # Python dependencies
-│   └── README.md           # Predictor-specific docs
 ├── src/                    # React frontend
 │   ├── components/         # UI components
 │   ├── pages/             # Page components
@@ -71,15 +65,7 @@ Backend runs on: http://localhost:4000
 
 **Note**: To use AI agents, you need a Gemini API key from [Google AI Studio](https://makersuite.google.com/app/apikey). Add it to your `.env` file as shown above.
 
-### 3. Price Predictor Setup (Python)
-```bash
-cd predictor-backend
-pip install -r requirements.txt
-uvicorn main:app --reload --host 0.0.0.0 --port 8000
-```
-Predictor API runs on: http://localhost:8000
-
-### 4. Frontend Setup (React)
+### 3. Frontend Setup (React)
 ```bash
 # From project root
 npm install
@@ -103,11 +89,6 @@ Frontend runs on: http://localhost:8081
 5. Choose strategy and parameters
 6. Click "Run Backtest" to see results
 
-### Price Prediction
-1. Scroll to "Next Hour Price Predictor"
-2. Enter OHLCV data (Open, High, Low, Close, Volume)
-3. Click "Predict Next Hour" for AI prediction
-4. View confidence levels and probability
 
 ### AI Agents
 1. Navigate to `/agents` or click "AI Agents" in the navigation
@@ -129,11 +110,6 @@ Frontend runs on: http://localhost:8081
 - `POST /api/agents/backtest-analyst` - AI backtest analysis
 - `POST /api/agents/trade-coach` - Personalized trading coaching
 
-### Price Predictor (Python)
-- `GET /` - API information
-- `GET /health` - Health check
-- `POST /predict` - Predict price movement
-- `POST /retrain` - Retrain model
 
 ## 🔧 Configuration
 
@@ -147,12 +123,6 @@ NODE_ENV=development
 GEMINI_API_KEY=your_gemini_api_key_here
 ```
 
-**Predictor Backend (.env)**
-```
-# Optional: Add API keys for better data sources
-ALPHA_VANTAGE_API_KEY=your_key_here
-POLYGON_API_KEY=your_key_here
-```
 
 ## 🧪 Testing
 
@@ -163,12 +133,6 @@ curl -X POST http://localhost:4000/api/backtest \
   -d '{"symbol":"AAPL","start":"2023-01-01","end":"2024-01-01","strategy":{"kind":"smaCross","params":{"fast":10,"slow":30}}}'
 ```
 
-### Price Predictor
-```bash
-curl -X POST http://localhost:8000/predict \
-  -H "Content-Type: application/json" \
-  -d '{"data":{"open":100,"high":105,"low":98,"close":103,"volume":10000}}'
-```
 
 ### AI Agents
 ```bash
@@ -199,11 +163,6 @@ The frontend uses:
 
 ## 🤖 Machine Learning
 
-### Price Predictor Model
-- **Algorithm**: RandomForestClassifier
-- **Features**: OHLCV data, price ratios, volume metrics, technical indicators
-- **Training**: Synthetic data with realistic market patterns
-- **Output**: Binary prediction (up/down) with confidence levels
 
 ### Data Sources
 1. **Yahoo Finance** (Primary)
@@ -226,18 +185,12 @@ npm run build
 # Deploy with Node.js runtime
 ```
 
-### Predictor (Railway/Heroku)
-```bash
-cd predictor-backend
-# Deploy with Python runtime
-```
 
 ## 📝 Development
 
 ### Adding New Features
 1. **Backend**: Add routes in `backend/src/routes/`
 2. **Frontend**: Create components in `src/components/`
-3. **Predictor**: Extend `main.py` with new endpoints
 
 ### Code Style
 - **TypeScript**: Strict mode enabled
@@ -278,10 +231,6 @@ For issues and questions:
 - Verify Node.js version (18+)
 - Run `npm install` in backend directory
 
-**Predictor API not responding:**
-- Check if port 8000 is available
-- Verify Python version (3.8+)
-- Install requirements: `pip install -r requirements.txt`
 
 **Frontend build errors:**
 - Clear node_modules: `rm -rf node_modules && npm install`

@@ -1,7 +1,8 @@
+// Enhanced AI-powered backend server for AlgoCode trading platform
 import dotenv from 'dotenv';
 import path from 'path';
 
-// Load environment variables from .env file
+// Load environment variables from .env file with explicit path resolution
 dotenv.config({ 
   path: path.resolve(process.cwd(), '.env'),
   override: true 
@@ -10,10 +11,13 @@ dotenv.config({
 import express from 'express';
 import cors from 'cors';
 import morgan from 'morgan';
+// Rate limiting for API protection
 import rateLimit from 'express-rate-limit';
 
+// Import API routes for AI agents and trading functionality
 import { router as apiRouter } from './routes/api.js';
 
+// Initialize Express application with enhanced middleware
 const app = express();
 
 app.use(cors());
